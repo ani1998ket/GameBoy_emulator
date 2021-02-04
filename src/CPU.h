@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "utils.h"
 #include "MMU.h"
 
@@ -8,10 +10,14 @@ struct Flag{
 };
 
 class CPU{
+
 public:
+
     CPU();
     void connect(MMU* p_mmu);
     void reset();
+
+    void step();
 
 private:
 
@@ -22,8 +28,12 @@ private:
 
     Byte opcode;
     Byte arg1, arg2;
+    std::function< void() > opcode_lookup[256];
 
 private:
 
+    void fetch();
+    void decode();
+    void execute();
     Pointer combine( Register high, Register low);
 };
