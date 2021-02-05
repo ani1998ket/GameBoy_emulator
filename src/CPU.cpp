@@ -1,5 +1,5 @@
 #include "CPU.h"
-#include "ISA.h"
+#include "InstructionSet.h"
 
 #define BC combine(B, C)
 #define DE combine(D, E)
