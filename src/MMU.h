@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "utils.h"
 
 struct MemorySegment{
@@ -8,7 +10,7 @@ struct MemorySegment{
     constexpr Pointer size() const { return (end-start)+1; }
 };
 
-const struct MemorySegment SEGMENT_INTERNAL_RAM{0xc000,0xdfff};
+constexpr struct MemorySegment SEGMENT_INTERNAL_RAM{0xc000,0xdfff};
 
 class MMU{
 
@@ -21,6 +23,6 @@ public:
 
 private:
 
-    Byte internal_ram[ SEGMENT_INTERNAL_RAM.size() ] = {0};
+    std::array< Byte, SEGMENT_INTERNAL_RAM.size() > internal_ram = {0};
 
 };
