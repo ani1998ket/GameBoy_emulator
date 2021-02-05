@@ -2,7 +2,13 @@
 
 #include "utils.h"
 
-static const int INTERNAL_RAM_SIZE = 8192;
+struct MemorySegment{
+    Pointer start;
+    Pointer end;
+    constexpr Pointer size() const { return (end-start)+1; }
+};
+
+const struct MemorySegment SEGMENT_INTERNAL_RAM{0xc000,0xdfff};
 
 class MMU{
 
@@ -15,6 +21,6 @@ public:
 
 private:
 
-    Byte internal_ram[INTERNAL_RAM_SIZE] = {0};
+    Byte internal_ram[ SEGMENT_INTERNAL_RAM.size() ] = {0};
 
 };
