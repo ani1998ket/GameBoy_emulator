@@ -36,13 +36,25 @@ private:
     void decode();
     void execute();
 
-    Pointer combine( Register high, Register low);
+    Pointer combine( Register hi, Register lo);
     void init();
 
     // 8 bit load commands
     void LD_R   (Register& r, Byte value);
     void LD_R_P (Register& r, Pointer address);
     void LD_P   (Pointer address, Byte value);
+
+    // ALU
+    void ADD( Byte value );
+    void SUB( Byte value );
+    void AND( Byte value );
+    void OR ( Byte value );
+    void ADC( Byte value );
+    void SBC( Byte value );
+    void XOR( Byte value );
+    void CP ( Byte value );
+
+    void POP(Register& hi, Register& lo);
 
     void INC_R(Register& r);
     void INC_P(Pointer p);
