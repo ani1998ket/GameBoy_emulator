@@ -35,5 +35,19 @@ private:
     void fetch();
     void decode();
     void execute();
+
     Pointer combine( Register high, Register low);
+    void init();
+
+    // 8 bit load commands
+    void LD_R   (Register& r, Byte value);
+    void LD_R_P (Register& r, Pointer address);
+    void LD_P   (Pointer address, Byte value);
+
+    void INC_R(Register& r);
+    void INC_P(Pointer p);
+    void DEC_R(Register& r);
+    void DEC_P(Pointer p);
+
 };
+    
