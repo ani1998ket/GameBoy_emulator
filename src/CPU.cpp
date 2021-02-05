@@ -30,6 +30,7 @@ void CPU::reset()
 Pointer combine(Register high, Register low)
 {
     Pointer result = (high<<8) + low;
+    return result;
 }
 
 void CPU::fetch()
