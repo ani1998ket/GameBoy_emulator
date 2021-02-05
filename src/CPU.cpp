@@ -66,6 +66,17 @@ void CPU::LD_P(Pointer address, Byte value)
     p_mmu->write(address, value);
 }
 
+void CPU::LD16_R(Register& hi, Register& lo, Pointer value )
+{
+    lo = (Byte)(0x00ff & value);
+    hi = (Byte)(value >> 8);
+}
+void CPU::LD16_R(Pointer r, Pointer value)
+{
+    r = value;
+}
+
+
 void CPU::init(){
     opcode_lookup[0x00] = [this](){};
     opcode_lookup[0x10] = [this](){};
@@ -87,7 +98,7 @@ void CPU::init(){
     opcode_lookup[0x01] = [this](){ LD_R(B, arg2); LD_R(C, arg1); };
     opcode_lookup[0x11] = [this](){ LD_R(D, arg2); LD_R(E, arg1); };
     opcode_lookup[0x21] = [this](){ LD_R(H, arg2); LD_R(L, arg1); };
-    opcode_lookup[0x31] = [this](){ SP = combine(arg2,arg1); };
+    opcode_lookup[0x31] = [this](){ LD16_R(SP, combine(arg2,arg1)); };
     opcode_lookup[0x41] = [this](){ LD_R(B, C); };
     opcode_lookup[0x51] = [this](){ LD_R(D, C); };
     opcode_lookup[0x61] = [this](){ LD_R(H, C); };
@@ -100,5 +111,22 @@ void CPU::init(){
     opcode_lookup[0xd1] = [this](){ POP(D, E); };
     opcode_lookup[0xe1] = [this](){ POP(H, L); };
     opcode_lookup[0xf1] = [this](){ /* Change flag */ };
+
+    opcode_lookup[0x02] = [this](){ LD_P(BC, A); };
+    opcode_lookup[0x12] = [this](){ LD_P(DE, A); };
+    opcode_lookup[0x22] = [this](){ LD_P(HL, A); LD16_R(H, L, HL + 1); };
+    opcode_lookup[0x32] = [this](){ LD_P(HL, A); LD16_R(H, L, HL - 1); };
+    opcode_lookup[0x42] = [this](){ LD_R(B, D); };
+    opcode_lookup[0x52] = [this](){ LD_R(D, D); };
+    opcode_lookup[0x62] = [this](){ LD_R(H, D); };
+    opcode_lookup[0x72] = [this](){ LD_P(HL,D); };
+    opcode_lookup[0x82] = [this](){ ADD(D); };
+    opcode_lookup[0x92] = [this](){ SUB(D); };
+    opcode_lookup[0xa2] = [this](){ AND(D); };
+    opcode_lookup[0xb2] = [this](){ OR (D);};
+    opcode_lookup[0xc2] = [this](){};
+    opcode_lookup[0xd2] = [this](){};
+    opcode_lookup[0xe2] = [this](){ LD_P(0xff00 + C, A); };
+    opcode_lookup[0xf2] = [this](){ LD_R(A, 0xff00 + C); };
 
 }
