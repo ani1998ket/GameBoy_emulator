@@ -41,7 +41,7 @@ void CPU::fetch()
 void CPU::decode()
 {
     int args = instruction_data[opcode].length - 1;
-    if( args > 0 )
+    if( args > 0 || opcode == 0xcb)
         arg1 = p_mmu->read(PC++);
     if( args > 1 )
         arg2 = p_mmu->read(PC++);
