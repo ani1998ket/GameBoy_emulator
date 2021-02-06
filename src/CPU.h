@@ -57,13 +57,14 @@ private:
     void SBC( Byte value );
     void XOR( Byte value );
     void CP ( Byte value );
-
-    void POP(Register& hi, Register& lo);
-
     void INC_R(Register& r);
-    void INC_P(Pointer p);
     void DEC_R(Register& r);
+    void INC_P(Pointer p);
     void DEC_P(Pointer p);
+
+    //Stack operations
+    void POP (Register& hi, Register& lo);
+    void PUSH(Register& hi, Register& lo);
 
 };
     

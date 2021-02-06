@@ -56,6 +56,7 @@ void CPU::LD_R(Register& r, Byte value)
 {
     r = value;
 }
+
 void CPU::LD_R_P(Register& r, Pointer address)
 {
     r = p_mmu->read( address );
@@ -71,11 +72,11 @@ void CPU::LD16_R(Register& hi, Register& lo, Pointer value )
     lo = (Byte)(0x00ff & value);
     hi = (Byte)(value >> 8);
 }
+
 void CPU::LD16_R(Pointer r, Pointer value)
 {
     r = value;
 }
-
 
 void CPU::init(){
     opcode_lookup[0x00] = [this](){};
