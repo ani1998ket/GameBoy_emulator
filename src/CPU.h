@@ -29,6 +29,7 @@ private:
     Byte opcode;
     Byte arg1, arg2;
     std::function< void() > opcode_lookup[256];
+    std::function< void() > cb_opcode_lookup[256];
 
 private:
 
@@ -38,6 +39,7 @@ private:
 
     Pointer combine( Register hi, Register lo);
     void init();
+    void init_cb();
 
     // 8 bit load commands
     void LD_R   (Register& r, Byte value);
@@ -66,4 +68,3 @@ private:
     void DEC_P(Pointer p);
 
 };
-    
