@@ -79,7 +79,7 @@ void CPU::LD16_R(Pointer r, Pointer value)
 }
 
 void CPU::init(){
-    opcode_lookup[0x00] = [this](){};
+    opcode_lookup[0x00] = [this](){ NOP(); };
     opcode_lookup[0x10] = [this](){};
     opcode_lookup[0x20] = [this](){};
     opcode_lookup[0x30] = [this](){};
@@ -90,7 +90,7 @@ void CPU::init(){
     opcode_lookup[0x80] = [this](){ ADD(B); };
     opcode_lookup[0x90] = [this](){ SUB(B); };
     opcode_lookup[0xa0] = [this](){ AND(B); };
-    opcode_lookup[0xb0] = [this](){ OR (B);};
+    opcode_lookup[0xb0] = [this](){ OR (B); };
     opcode_lookup[0xc0] = [this](){};
     opcode_lookup[0xd0] = [this](){};
     opcode_lookup[0xe0] = [this](){ LD_P(0xff00 + arg1, A); };
@@ -107,7 +107,7 @@ void CPU::init(){
     opcode_lookup[0x81] = [this](){ ADD(C); };
     opcode_lookup[0x91] = [this](){ SUB(C); };
     opcode_lookup[0xa1] = [this](){ AND(C); };
-    opcode_lookup[0xb1] = [this](){ OR (C);};
+    opcode_lookup[0xb1] = [this](){ OR (C); };
     opcode_lookup[0xc1] = [this](){ POP(B, C); };
     opcode_lookup[0xd1] = [this](){ POP(D, E); };
     opcode_lookup[0xe1] = [this](){ POP(H, L); };
@@ -124,10 +124,27 @@ void CPU::init(){
     opcode_lookup[0x82] = [this](){ ADD(D); };
     opcode_lookup[0x92] = [this](){ SUB(D); };
     opcode_lookup[0xa2] = [this](){ AND(D); };
-    opcode_lookup[0xb2] = [this](){ OR (D);};
+    opcode_lookup[0xb2] = [this](){ OR (D); };
     opcode_lookup[0xc2] = [this](){};
     opcode_lookup[0xd2] = [this](){};
     opcode_lookup[0xe2] = [this](){ LD_P(0xff00 + C, A); };
     opcode_lookup[0xf2] = [this](){ LD_R(A, 0xff00 + C); };
+
+    opcode_lookup[0x03] = [this](){ INC16(B,C); };
+    opcode_lookup[0x13] = [this](){ INC16(D,E); };
+    opcode_lookup[0x23] = [this](){ INC16(H,L); };
+    opcode_lookup[0x33] = [this](){ INC16(SP); };
+    opcode_lookup[0x43] = [this](){ LD_R(B, E); };
+    opcode_lookup[0x53] = [this](){ LD_R(D, E); };
+    opcode_lookup[0x63] = [this](){ LD_R(H, E); };
+    opcode_lookup[0x73] = [this](){ LD_P(HL,E); };
+    opcode_lookup[0x83] = [this](){ ADD(E); };
+    opcode_lookup[0x93] = [this](){ SUB(E); };
+    opcode_lookup[0xa3] = [this](){ AND(E); };
+    opcode_lookup[0xb3] = [this](){ OR (E); };
+    opcode_lookup[0xc3] = [this](){};
+    opcode_lookup[0xd3] = [this](){};
+    opcode_lookup[0xe3] = [this](){};
+    opcode_lookup[0xf3] = [this](){};
 
 }

@@ -39,6 +39,7 @@ private:
     Pointer combine( Register hi, Register lo);
     void init();
 
+    void NOP();
     // 8 bit load commands
     void LD_R   (Register& r, Byte value);
     void LD_R_P (Register& r, Pointer address);
@@ -61,6 +62,11 @@ private:
     void DEC_R(Register& r);
     void INC_P(Pointer p);
     void DEC_P(Pointer p);
+
+    void INC16(Register& hi, Register& lo);
+    void INC16(Pointer& r);
+    void DEC16(Register& hi, Register& lo);
+    void DEC16(Pointer& r);
 
     //Stack operations
     void POP (Register& hi, Register& lo);
