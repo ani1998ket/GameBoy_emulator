@@ -19,8 +19,8 @@ void CPU::reset()
 {
     A = 0;
     B = 0;
-    C = 0; 
-    D = 0; 
+    C = 0;
+    D = 0;
     E = 0;
     F.Z = F.N = F.H = F.C = false;
     SP = 0;
@@ -49,7 +49,14 @@ void CPU::decode()
 
 void CPU::execute()
 {
-    opcode_lookup[opcode]();
+    if (opcode == 0xcb)
+    {
+        cb_opcode_lookup[arg1]();
+    }
+    else
+    {
+        opcode_lookup[opcode]();
+    }
 }
 
 void CPU::LD_R(Register& r, Byte value)
