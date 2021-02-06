@@ -73,7 +73,7 @@ void CPU::LD16_R(Register& hi, Register& lo, Pointer value )
     hi = (Byte)(value >> 8);
 }
 
-void CPU::LD16_R(Pointer r, Pointer value)
+void CPU::LD16_R(Pointer& r, Pointer value)
 {
     r = value;
 }

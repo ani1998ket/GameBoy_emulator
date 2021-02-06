@@ -46,7 +46,7 @@ private:
 
     // 16 bit load commands
     void LD16_R(Register& hi, Register& lo, Pointer value );
-    void LD16_R(Pointer r, Pointer value);
+    void LD16_R(Pointer& r, Pointer value);
 
     // ALU
     void ADD( Byte value );
