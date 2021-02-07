@@ -67,7 +67,8 @@ private:
     void DEC_R(Register& r);
     void DEC_P(Pointer p);
 
-    //rotate
+    //cb
     void RLC(Register &r);
+    void RRC(Register &r);
 
 };
