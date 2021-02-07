@@ -77,5 +77,5 @@ private:
     void SRL(Register &r);
     void BIT(int bit_ind, Register &r);
     void SET(int bit_ind, Register &r);
-    void RESET(int bit_ind, Register &r);
+    void RES(int bit_ind, Register &r);
 };
