@@ -36,7 +36,7 @@ private:
     void decode();
     void execute();
 
-    Pointer combine( Register hi, Register lo);
+    Pointer combine( Byte hi, Byte lo);
     void init();
 
     void NOP();
@@ -71,6 +71,5 @@ private:
     //Stack operations
     void POP (Register& hi, Register& lo);
     void PUSH(Register& hi, Register& lo);
-
 };
     

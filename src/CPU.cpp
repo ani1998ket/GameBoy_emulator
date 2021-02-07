@@ -27,7 +27,7 @@ void CPU::reset()
     PC = 0;
 }
 
-Pointer combine(Register hi, Register lo)
+Pointer CPU::combine(Byte hi, Byte lo)
 {
     Pointer result = (hi<<8) + lo;
     return result;
@@ -51,6 +51,8 @@ void CPU::execute()
 {
     opcode_lookup[opcode]();
 }
+
+void CPU::NOP(){}
 
 void CPU::LD_R(Register& r, Byte value)
 {
@@ -77,6 +79,25 @@ void CPU::LD16_R(Pointer r, Pointer value)
 {
     r = value;
 }
+
+void CPU::ADD( Byte value ){}
+void CPU::SUB( Byte value ){}
+void CPU::AND( Byte value ){}
+void CPU::OR ( Byte value ){}
+void CPU::ADC( Byte value ){}
+void CPU::SBC( Byte value ){}
+void CPU::XOR( Byte value ){}
+void CPU::CP ( Byte value ){}
+void CPU::INC_R(Register& r){}
+void CPU::DEC_R(Register& r){}
+void CPU::INC_P(Pointer p){}
+void CPU::DEC_P(Pointer p){}
+void CPU::INC16(Register& hi, Register& lo){}
+void CPU::INC16(Pointer& r){}
+void CPU::DEC16(Register& hi, Register& lo){}
+void CPU::DEC16(Pointer& r){}
+void CPU::POP (Register& hi, Register& lo){}
+void CPU::PUSH(Register& hi, Register& lo){}
 
 void CPU::init(){
     opcode_lookup[0x00] = [this](){ NOP(); };
@@ -133,7 +154,7 @@ void CPU::init(){
     opcode_lookup[0x03] = [this](){ INC16(B,C); };
     opcode_lookup[0x13] = [this](){ INC16(D,E); };
     opcode_lookup[0x23] = [this](){ INC16(H,L); };
-    opcode_lookup[0x33] = [this](){ INC16(SP); };
+    opcode_lookup[0x33] = [this](){ INC16(SP);  };
     opcode_lookup[0x43] = [this](){ LD_R(B, E); };
     opcode_lookup[0x53] = [this](){ LD_R(D, E); };
     opcode_lookup[0x63] = [this](){ LD_R(H, E); };
@@ -146,5 +167,39 @@ void CPU::init(){
     opcode_lookup[0xd3] = [this](){};
     opcode_lookup[0xe3] = [this](){};
     opcode_lookup[0xf3] = [this](){};
+
+    opcode_lookup[0x04] = [this](){ INC_R(B); };
+    opcode_lookup[0x14] = [this](){ INC_R(D); };
+    opcode_lookup[0x24] = [this](){ INC_R(H); };
+    opcode_lookup[0x34] = [this](){ INC_P(HL); };
+    opcode_lookup[0x44] = [this](){ LD_R(B, H); };
+    opcode_lookup[0x54] = [this](){ LD_R(D, H); };
+    opcode_lookup[0x64] = [this](){ LD_R(H, H); };
+    opcode_lookup[0x74] = [this](){ LD_P(HL,H); };
+    opcode_lookup[0x84] = [this](){ ADD(H); };
+    opcode_lookup[0x94] = [this](){ SUB(H); };
+    opcode_lookup[0xa4] = [this](){ AND(H); };
+    opcode_lookup[0xb4] = [this](){ OR (H); };
+    opcode_lookup[0xc4] = [this](){};
+    opcode_lookup[0xd4] = [this](){};
+    opcode_lookup[0xe4] = [this](){};
+    opcode_lookup[0xf4] = [this](){};
+
+    opcode_lookup[0x05] = [this](){ DEC_R(B); };
+    opcode_lookup[0x15] = [this](){ DEC_R(D); };
+    opcode_lookup[0x25] = [this](){ DEC_R(H); };
+    opcode_lookup[0x35] = [this](){ DEC_P(HL); };
+    opcode_lookup[0x45] = [this](){ LD_R(B, L); };
+    opcode_lookup[0x55] = [this](){ LD_R(D, L); };
+    opcode_lookup[0x65] = [this](){ LD_R(H, L); };
+    opcode_lookup[0x75] = [this](){ LD_P(HL,L); };
+    opcode_lookup[0x85] = [this](){ ADD(L); };
+    opcode_lookup[0x95] = [this](){ SUB(L); };
+    opcode_lookup[0xa5] = [this](){ AND(L); };
+    opcode_lookup[0xb5] = [this](){ OR (L); };
+    opcode_lookup[0xc5] = [this](){ PUSH(B, C); };
+    opcode_lookup[0xd5] = [this](){ PUSH(D, E); };
+    opcode_lookup[0xe5] = [this](){ PUSH(H, L); };
+    opcode_lookup[0xf5] = [this](){};
 
 }
