@@ -78,4 +78,5 @@ private:
     void BIT(int bit_ind, Register &r);
     void SET(int bit_ind, Register &r);
     void RES(int bit_ind, Register &r);
+    void SWAP(Register &r);
 };

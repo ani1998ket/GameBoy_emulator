@@ -147,6 +147,12 @@ void CPU::SET(int bit_ind, Register &r)
     }
     r = temp;
 }
+void CPU::SWAP(Register &r)
+{
+    Byte temp1 = (r&0b11110000)>>4;
+    Byte temp2 = (r&0b00001111)<<4;
+    r = temp1+temp2;
+}
 void CPU::init_cb(){
     cb_opcode_lookup[0x00] = [this](){ RLC(B); };
     cb_opcode_lookup[0x01] = [this](){ RLC(C); };
@@ -199,14 +205,14 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x2e] = [this](){};
     cb_opcode_lookup[0x2f] = [this](){ SRA(A) };
 
-    cb_opcode_lookup[0x30] = [this](){};
-    cb_opcode_lookup[0x31] = [this](){};
-    cb_opcode_lookup[0x32] = [this](){};
-    cb_opcode_lookup[0x33] = [this](){};
-    cb_opcode_lookup[0x34] = [this](){};
-    cb_opcode_lookup[0x35] = [this](){};
+    cb_opcode_lookup[0x30] = [this](){ SWAP(B) };
+    cb_opcode_lookup[0x31] = [this](){ SWAP(C) };
+    cb_opcode_lookup[0x32] = [this](){ SWAP(D) };
+    cb_opcode_lookup[0x33] = [this](){ SWAP(E) };
+    cb_opcode_lookup[0x34] = [this](){ SWAP(H) };
+    cb_opcode_lookup[0x35] = [this](){ SWAP(L) };
     cb_opcode_lookup[0x36] = [this](){};
-    cb_opcode_lookup[0x37] = [this](){};
+    cb_opcode_lookup[0x37] = [this](){ SWAP(A) };
     cb_opcode_lookup[0x38] = [this](){ SRL(B) };
     cb_opcode_lookup[0x39] = [this](){ SRL(C) };
     cb_opcode_lookup[0x3a] = [this](){ SRL(D) };
