@@ -54,7 +54,7 @@ void CPU::RL(Register &r)
 
 void CPU::RR(Register &r)
 {
-    bool temp1 = ((r<<7)&128);
+    bool temp1 = r<<7;
     Byte temp2 = r>>1;
     r = temp2+(F.C<<7);
     F.C = temp1;
@@ -64,6 +64,39 @@ void CPU::RR(Register &r)
     }
     F.N = 0;
     F.H = 0;
+}
+
+void CPU::SLA(Register &r)
+{
+    F.C = r>>7;
+    Byte temp = r<<1;
+    r = temp;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
+void CPU::SRA(Register &r)
+{
+    F.C = r<<7;
+    Byte temp = (r>>1)+(r&128);
+    r = temp;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
+void CPU::SRL(Register &r)
+{
+    F.C = r<<7;
+    Byte temp = r>>1;
+    r = temp;
 }
 void CPU::init_cb(){
     cb_opcode_lookup[0x00] = [this](){ RLC(B); };
@@ -100,22 +133,22 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x1e] = [this](){};
     cb_opcode_lookup[0x1f] = [this](){ RR(A); };
 
-    cb_opcode_lookup[0x20] = [this](){};
-    cb_opcode_lookup[0x21] = [this](){};
-    cb_opcode_lookup[0x22] = [this](){};
-    cb_opcode_lookup[0x23] = [this](){};
-    cb_opcode_lookup[0x24] = [this](){};
-    cb_opcode_lookup[0x25] = [this](){};
+    cb_opcode_lookup[0x20] = [this](){ SLA(B) };
+    cb_opcode_lookup[0x21] = [this](){ SLA(C) };
+    cb_opcode_lookup[0x22] = [this](){ SLA(D) };
+    cb_opcode_lookup[0x23] = [this](){ SLA(E) };
+    cb_opcode_lookup[0x24] = [this](){ SLA(H) };
+    cb_opcode_lookup[0x25] = [this](){ SLA(L) };
     cb_opcode_lookup[0x26] = [this](){};
-    cb_opcode_lookup[0x27] = [this](){};
-    cb_opcode_lookup[0x28] = [this](){};
-    cb_opcode_lookup[0x29] = [this](){};
-    cb_opcode_lookup[0x2a] = [this](){};
-    cb_opcode_lookup[0x2b] = [this](){};
-    cb_opcode_lookup[0x2c] = [this](){};
-    cb_opcode_lookup[0x2d] = [this](){};
+    cb_opcode_lookup[0x27] = [this](){ SLA(A) };
+    cb_opcode_lookup[0x28] = [this](){ SRA(B) };
+    cb_opcode_lookup[0x29] = [this](){ SRA(C) };
+    cb_opcode_lookup[0x2a] = [this](){ SRA(D) };
+    cb_opcode_lookup[0x2b] = [this](){ SRA(E) };
+    cb_opcode_lookup[0x2c] = [this](){ SRA(H) };
+    cb_opcode_lookup[0x2d] = [this](){ SRA(L) };
     cb_opcode_lookup[0x2e] = [this](){};
-    cb_opcode_lookup[0x2f] = [this](){};
+    cb_opcode_lookup[0x2f] = [this](){ SRA(A) };
 
     cb_opcode_lookup[0x30] = [this](){};
     cb_opcode_lookup[0x31] = [this](){};
@@ -125,12 +158,12 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x35] = [this](){};
     cb_opcode_lookup[0x36] = [this](){};
     cb_opcode_lookup[0x37] = [this](){};
-    cb_opcode_lookup[0x38] = [this](){};
-    cb_opcode_lookup[0x39] = [this](){};
-    cb_opcode_lookup[0x3a] = [this](){};
-    cb_opcode_lookup[0x3b] = [this](){};
-    cb_opcode_lookup[0x3c] = [this](){};
-    cb_opcode_lookup[0x3d] = [this](){};
+    cb_opcode_lookup[0x38] = [this](){ SRL(B) };
+    cb_opcode_lookup[0x39] = [this](){ SRL(C) };
+    cb_opcode_lookup[0x3a] = [this](){ SRL(D) };
+    cb_opcode_lookup[0x3b] = [this](){ SRL(E) };
+    cb_opcode_lookup[0x3c] = [this](){ SRL(H) };
+    cb_opcode_lookup[0x3d] = [this](){ SRL(L) };
     cb_opcode_lookup[0x3e] = [this](){};
-    cb_opcode_lookup[0x3f] = [this](){};
+    cb_opcode_lookup[0x3f] = [this](){ SRL(A) };
 }

@@ -72,5 +72,8 @@ private:
     void RRC(Register &r);
     void RL (Register &r);
     void RR (Register &r);
+    void SLA(Register &r);
+    void SRA(Register &r);
+    void SRL(Register &r);
 
 };
