@@ -1,4 +1,5 @@
 #include "CPU.h"
+#include <cmath>
 
 #define BC combine(B, C)
 #define DE combine(D, E)
@@ -82,7 +83,7 @@ void CPU::SLA(Register &r)
 void CPU::SRA(Register &r)
 {
     F.C = r<<7;
-    Byte temp = (r>>1)+(r&128);
+    Byte temp = (r>>1)+(r&(0b10000000));
     r = temp;
     if (r==0)
     {
@@ -97,6 +98,16 @@ void CPU::SRL(Register &r)
     F.C = r<<7;
     Byte temp = r>>1;
     r = temp;
+}
+
+void CPU::BIT(int bit_ind, Register &r)
+{
+    if (r&((Byte)(pow(2,bit_ind))) == 0)
+    {
+        F.Z = 0;
+    }
+    F.N = 0;
+    F.H = 1;
 }
 void CPU::init_cb(){
     cb_opcode_lookup[0x00] = [this](){ RLC(B); };
@@ -166,4 +177,107 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x3d] = [this](){ SRL(L) };
     cb_opcode_lookup[0x3e] = [this](){};
     cb_opcode_lookup[0x3f] = [this](){ SRL(A) };
+
+    cb_opcode_lookup[0x40] = [this](){ BIT(0,B) };
+    cb_opcode_lookup[0x41] = [this](){ BIT(0,C) };
+    cb_opcode_lookup[0x42] = [this](){ BIT(0,D) };
+    cb_opcode_lookup[0x43] = [this](){ BIT(0,E) };
+    cb_opcode_lookup[0x44] = [this](){ BIT(0,H) };
+    cb_opcode_lookup[0x45] = [this](){ BIT(0,L) };
+    cb_opcode_lookup[0x46] = [this](){};
+    cb_opcode_lookup[0x47] = [this](){ BIT(0,A) };
+    cb_opcode_lookup[0x48] = [this](){ BIT(1,B) };
+    cb_opcode_lookup[0x49] = [this](){ BIT(1,C) };
+    cb_opcode_lookup[0x4a] = [this](){ BIT(1,D) };
+    cb_opcode_lookup[0x4b] = [this](){ BIT(1,E) };
+    cb_opcode_lookup[0x4c] = [this](){ BIT(1,H) };
+    cb_opcode_lookup[0x4d] = [this](){ BIT(1,L) };
+    cb_opcode_lookup[0x4e] = [this](){};
+    cb_opcode_lookup[0x4f] = [this](){ BIT(1,A) };
+
+    cb_opcode_lookup[0x50] = [this](){ BIT(2,B) };
+    cb_opcode_lookup[0x51] = [this](){ BIT(2,C) };
+    cb_opcode_lookup[0x52] = [this](){ BIT(2,D) };
+    cb_opcode_lookup[0x53] = [this](){ BIT(2,E) };
+    cb_opcode_lookup[0x54] = [this](){ BIT(2,H) };
+    cb_opcode_lookup[0x55] = [this](){ BIT(2,L) };
+    cb_opcode_lookup[0x56] = [this](){};
+    cb_opcode_lookup[0x57] = [this](){ BIT(2,A) };
+    cb_opcode_lookup[0x58] = [this](){ BIT(3,B) };
+    cb_opcode_lookup[0x59] = [this](){ BIT(3,C) };
+    cb_opcode_lookup[0x5a] = [this](){ BIT(3,D) };
+    cb_opcode_lookup[0x5b] = [this](){ BIT(3,E) };
+    cb_opcode_lookup[0x5c] = [this](){ BIT(3,H) };
+    cb_opcode_lookup[0x5d] = [this](){ BIT(3,L) };
+    cb_opcode_lookup[0x5e] = [this](){};
+    cb_opcode_lookup[0x5f] = [this](){ BIT(3,A) };
+
+    cb_opcode_lookup[0x60] = [this](){ BIT(4,B) };
+    cb_opcode_lookup[0x61] = [this](){ BIT(4,C) };
+    cb_opcode_lookup[0x62] = [this](){ BIT(4,D) };
+    cb_opcode_lookup[0x63] = [this](){ BIT(4,E) };
+    cb_opcode_lookup[0x64] = [this](){ BIT(4,H) };
+    cb_opcode_lookup[0x65] = [this](){ BIT(4,L) };
+    cb_opcode_lookup[0x66] = [this](){};
+    cb_opcode_lookup[0x67] = [this](){ BIT(4,A) };
+    cb_opcode_lookup[0x68] = [this](){ BIT(5,B) };
+    cb_opcode_lookup[0x69] = [this](){ BIT(5,C) };
+    cb_opcode_lookup[0x6a] = [this](){ BIT(5,D) };
+    cb_opcode_lookup[0x6b] = [this](){ BIT(5,E) };
+    cb_opcode_lookup[0x6c] = [this](){ BIT(5,H) };
+    cb_opcode_lookup[0x6d] = [this](){ BIT(5,L) };
+    cb_opcode_lookup[0x6e] = [this](){};
+    cb_opcode_lookup[0x6f] = [this](){ BIT(5,A) };
+
+    cb_opcode_lookup[0x70] = [this](){ BIT(6,B) };
+    cb_opcode_lookup[0x71] = [this](){ BIT(6,C) };
+    cb_opcode_lookup[0x72] = [this](){ BIT(6,D) };
+    cb_opcode_lookup[0x73] = [this](){ BIT(6,E) };
+    cb_opcode_lookup[0x74] = [this](){ BIT(6,H) };
+    cb_opcode_lookup[0x75] = [this](){ BIT(6,L) };
+    cb_opcode_lookup[0x76] = [this](){};
+    cb_opcode_lookup[0x77] = [this](){ BIT(7,A) };
+    cb_opcode_lookup[0x78] = [this](){ BIT(7,B) };
+    cb_opcode_lookup[0x79] = [this](){ BIT(7,C) };
+    cb_opcode_lookup[0x7a] = [this](){ BIT(7,D) };
+    cb_opcode_lookup[0x7b] = [this](){ BIT(7,E) };
+    cb_opcode_lookup[0x7c] = [this](){ BIT(7,H) };
+    cb_opcode_lookup[0x7d] = [this](){ BIT(7,L) };
+    cb_opcode_lookup[0x7e] = [this](){};
+    cb_opcode_lookup[0x7f] = [this](){ BIT(7,A) };
+
+    cb_opcode_lookup[0x80] = [this](){};
+    cb_opcode_lookup[0x81] = [this](){};
+    cb_opcode_lookup[0x82] = [this](){};
+    cb_opcode_lookup[0x83] = [this](){};
+    cb_opcode_lookup[0x84] = [this](){};
+    cb_opcode_lookup[0x85] = [this](){};
+    cb_opcode_lookup[0x86] = [this](){};
+    cb_opcode_lookup[0x87] = [this](){};
+    cb_opcode_lookup[0x88] = [this](){};
+    cb_opcode_lookup[0x89] = [this](){};
+    cb_opcode_lookup[0x8a] = [this](){};
+    cb_opcode_lookup[0x8b] = [this](){};
+    cb_opcode_lookup[0x8c] = [this](){};
+    cb_opcode_lookup[0x8d] = [this](){};
+    cb_opcode_lookup[0x8e] = [this](){};
+    cb_opcode_lookup[0x8f] = [this](){};
+
+    cb_opcode_lookup[0x90] = [this](){};
+    cb_opcode_lookup[0x91] = [this](){};
+    cb_opcode_lookup[0x92] = [this](){};
+    cb_opcode_lookup[0x93] = [this](){};
+    cb_opcode_lookup[0x94] = [this](){};
+    cb_opcode_lookup[0x95] = [this](){};
+    cb_opcode_lookup[0x96] = [this](){};
+    cb_opcode_lookup[0x97] = [this](){};
+    cb_opcode_lookup[0x98] = [this](){};
+    cb_opcode_lookup[0x99] = [this](){};
+    cb_opcode_lookup[0x9a] = [this](){};
+    cb_opcode_lookup[0x9b] = [this](){};
+    cb_opcode_lookup[0x9c] = [this](){};
+    cb_opcode_lookup[0x9d] = [this](){};
+    cb_opcode_lookup[0x9e] = [this](){};
+    cb_opcode_lookup[0x9f] = [this](){};
+
 }

@@ -75,5 +75,7 @@ private:
     void SLA(Register &r);
     void SRA(Register &r);
     void SRL(Register &r);
-
+    void BIT(int bit_ind, Register &r);
+    void SET(int bit_ind, Register &r);
+    void RESET(int bit_ind, Register &r);
 };
