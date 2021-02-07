@@ -7,11 +7,32 @@
 void CPU::RLC(Register &r)
 {
     F.C = r>>7;
-    uint8_t temp = r<<1;
+    Byte temp = r<<1;
     r = temp + F.C;
     if (r == 0)
     {
         F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
+void CPU::RRC(Register &r)
+{
+    Byte temp1 = r<<7;
+    Byte temp2 = r>>1;
+    r = temp1 + temp2;
+    if (r == 0)
+    {
+        F.Z = 1;
+    }
+    if (temp1>0)
+    {
+        F.C = 1;
+    }
+    else
+    {
+        F.C = 0;
     }
     F.N = 0;
     F.H = 0;
@@ -24,15 +45,15 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x04] = [this](){ RLC(H); };
     cb_opcode_lookup[0x05] = [this](){ RLC(L); };
     cb_opcode_lookup[0x06] = [this](){};
-    cb_opcode_lookup[0x07] = [this](){ RLC(B); };
-    cb_opcode_lookup[0x08] = [this](){};
-    cb_opcode_lookup[0x09] = [this](){};
-    cb_opcode_lookup[0x0a] = [this](){};
-    cb_opcode_lookup[0x0b] = [this](){};
-    cb_opcode_lookup[0x0c] = [this](){};
-    cb_opcode_lookup[0x0d] = [this](){};
+    cb_opcode_lookup[0x07] = [this](){ RLC(A); };
+    cb_opcode_lookup[0x08] = [this](){ RRC(B); };
+    cb_opcode_lookup[0x09] = [this](){ RRC(C); };
+    cb_opcode_lookup[0x0a] = [this](){ RRC(D); };
+    cb_opcode_lookup[0x0b] = [this](){ RRC(E); };
+    cb_opcode_lookup[0x0c] = [this](){ RRC(H); };
+    cb_opcode_lookup[0x0d] = [this](){ RRC(L); };
     cb_opcode_lookup[0x0e] = [this](){};
-    cb_opcode_lookup[0x0f] = [this](){};
+    cb_opcode_lookup[0x0f] = [this](){ RRC(A); };
 
     cb_opcode_lookup[0x10] = [this](){};
     cb_opcode_lookup[0x11] = [this](){};
