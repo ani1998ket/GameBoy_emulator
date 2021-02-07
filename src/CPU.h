@@ -70,5 +70,7 @@ private:
     //cb
     void RLC(Register &r);
     void RRC(Register &r);
+    void RL (Register &r);
+    void RR (Register &r);
 
 };

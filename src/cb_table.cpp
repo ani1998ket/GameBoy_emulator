@@ -37,6 +37,34 @@ void CPU::RRC(Register &r)
     F.N = 0;
     F.H = 0;
 }
+
+void CPU::RL(Register &r)
+{
+    bool temp1 = r>>7;
+    Byte temp2 = r<<1;
+    r = temp2 + F.C;
+    F.C = temp1;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
+void CPU::RR(Register &r)
+{
+    bool temp1 = ((r<<7)&128);
+    Byte temp2 = r>>1;
+    r = temp2+(F.C<<7);
+    F.C = temp1;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
 void CPU::init_cb(){
     cb_opcode_lookup[0x00] = [this](){ RLC(B); };
     cb_opcode_lookup[0x01] = [this](){ RLC(C); };
@@ -55,22 +83,22 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x0e] = [this](){};
     cb_opcode_lookup[0x0f] = [this](){ RRC(A); };
 
-    cb_opcode_lookup[0x10] = [this](){};
-    cb_opcode_lookup[0x11] = [this](){};
-    cb_opcode_lookup[0x12] = [this](){};
-    cb_opcode_lookup[0x13] = [this](){};
-    cb_opcode_lookup[0x14] = [this](){};
-    cb_opcode_lookup[0x15] = [this](){};
+    cb_opcode_lookup[0x10] = [this](){ RL(B); };
+    cb_opcode_lookup[0x11] = [this](){ RL(C); };
+    cb_opcode_lookup[0x12] = [this](){ RL(D); };
+    cb_opcode_lookup[0x13] = [this](){ RL(E); };
+    cb_opcode_lookup[0x14] = [this](){ RL(H); };
+    cb_opcode_lookup[0x15] = [this](){ RL(L); };
     cb_opcode_lookup[0x16] = [this](){};
-    cb_opcode_lookup[0x17] = [this](){};
-    cb_opcode_lookup[0x18] = [this](){};
-    cb_opcode_lookup[0x19] = [this](){};
-    cb_opcode_lookup[0x1a] = [this](){};
-    cb_opcode_lookup[0x1b] = [this](){};
-    cb_opcode_lookup[0x1c] = [this](){};
-    cb_opcode_lookup[0x1d] = [this](){};
+    cb_opcode_lookup[0x17] = [this](){ RL(A); };
+    cb_opcode_lookup[0x18] = [this](){ RR(B); };
+    cb_opcode_lookup[0x19] = [this](){ RR(C); };
+    cb_opcode_lookup[0x1a] = [this](){ RR(D); };
+    cb_opcode_lookup[0x1b] = [this](){ RR(E); };
+    cb_opcode_lookup[0x1c] = [this](){ RR(H); };
+    cb_opcode_lookup[0x1d] = [this](){ RR(L); };
     cb_opcode_lookup[0x1e] = [this](){};
-    cb_opcode_lookup[0x1f] = [this](){};
+    cb_opcode_lookup[0x1f] = [this](){ RR(A); };
 
     cb_opcode_lookup[0x20] = [this](){};
     cb_opcode_lookup[0x21] = [this](){};
