@@ -5,8 +5,12 @@
 #include "utils.h"
 #include "MMU.h"
 
-struct Flag{
+class Flag{
+    public:
     bool Z, N, H, C;
+    Flag();
+    void reset();
+    Register get_register();
 };
 
 class CPU{
