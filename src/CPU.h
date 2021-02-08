@@ -83,7 +83,11 @@ private:
     void SRL(Register &r);
     void SRL_16(Pointer &r);
     void BIT(int bit_ind, Register &r);
+    void BIT_16(int bit_ind, Pointer &r);
     void SET(int bit_ind, Register &r);
+    void SET_16(int bit_ind, Pointer &r);
     void RES(int bit_ind, Register &r);
+    void RES_16(int bit_ind, Pointer &r);
     void SWAP(Register &r);
+    void SWAP_16(Pointter &r);
 };
