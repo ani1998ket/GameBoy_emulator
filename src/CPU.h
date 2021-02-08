@@ -44,6 +44,11 @@ private:
     void init();
 
     void NOP();
+    void STOP();
+    void HALT();    
+    void DI();
+    void EI();
+    
     // 8 bit load commands
     void LD_R   (Register& r, Byte value);
     void LD_R_P (Register& r, Pointer address);

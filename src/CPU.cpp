@@ -71,6 +71,10 @@ void CPU::execute()
 }
 
 void CPU::NOP(){}
+void CPU::STOP(){}
+void CPU::HALT(){}
+void CPU::DI(){}
+void CPU::EI(){}
 
 void CPU::LD_R(Register& r, Byte value)
 {
@@ -221,5 +225,22 @@ void CPU::init(){
     opcode_lookup[0xd5] = [this](){ PUSH(DE); };
     opcode_lookup[0xe5] = [this](){ PUSH(HL); };
     opcode_lookup[0xf5] = [this](){ PUSH(AF); };
+
+    opcode_lookup[0x06] = [this](){ LD_R(B, arg1); };
+    opcode_lookup[0x16] = [this](){ LD_R(D, arg1); };
+    opcode_lookup[0x26] = [this](){ LD_R(H, arg1); };
+    opcode_lookup[0x36] = [this](){ LD_P(HL,arg1); };
+    opcode_lookup[0x46] = [this](){ LD_R_P(B, HL); };
+    opcode_lookup[0x56] = [this](){ LD_R_P(D, HL); };
+    opcode_lookup[0x66] = [this](){ LD_R_P(H, HL); };
+    opcode_lookup[0x76] = [this](){ HALT(); };
+    opcode_lookup[0x86] = [this](){ ADD(p_mmu->read(HL)); };
+    opcode_lookup[0x96] = [this](){ SUB(p_mmu->read(HL)); };
+    opcode_lookup[0xa6] = [this](){ AND(p_mmu->read(HL)); };
+    opcode_lookup[0xb6] = [this](){ OR (p_mmu->read(HL)); };
+    opcode_lookup[0xc6] = [this](){ ADD( arg1 ); };
+    opcode_lookup[0xd6] = [this](){ SUB( arg1 ); };
+    opcode_lookup[0xe6] = [this](){ AND( arg1 ); };
+    opcode_lookup[0xf6] = [this](){ OR ( arg1 ); };
 
 }
