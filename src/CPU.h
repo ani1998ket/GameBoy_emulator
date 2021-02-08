@@ -10,7 +10,7 @@ class Flag{
     bool Z, N, H, C;
     Flag();
     void reset();
-    Register get_register();
+    Register get_register() const;
 };
 
 class CPU{
@@ -74,6 +74,7 @@ private:
 
     //Stack operations
     void POP (Register& hi, Register& lo);
-    void PUSH(Register& hi, Register& lo);
+    void PUSH( Pointer value );
+    void POP_AF();
 };
     

@@ -1,6 +1,7 @@
 #include "CPU.h"
 #include "InstructionSet.h"
 
+#define AF combine(A, F.get_register())
 #define BC combine(B, C)
 #define DE combine(D, E)
 #define HL combine(H, L)
@@ -14,7 +15,7 @@ void Flag::reset(){
     H = 0;
     C = 0;
 }
-Register Flag::get_register(){
+Register Flag::get_register() const {
    Register temp = 0;
    temp = (Z << 7) + (N << 6) + (H << 5) + (C<<4);
    return temp;  
@@ -114,7 +115,9 @@ void CPU::INC16(Pointer& r){}
 void CPU::DEC16(Register& hi, Register& lo){}
 void CPU::DEC16(Pointer& r){}
 void CPU::POP (Register& hi, Register& lo){}
-void CPU::PUSH(Register& hi, Register& lo){}
+void CPU::PUSH( Pointer value ){}
+// temporary fix
+void CPU::POP_AF(){}
 
 void CPU::init(){
     opcode_lookup[0x00] = [this](){ NOP(); };
@@ -149,7 +152,7 @@ void CPU::init(){
     opcode_lookup[0xc1] = [this](){ POP(B, C); };
     opcode_lookup[0xd1] = [this](){ POP(D, E); };
     opcode_lookup[0xe1] = [this](){ POP(H, L); };
-    opcode_lookup[0xf1] = [this](){ /* Change flag */ };
+    opcode_lookup[0xf1] = [this](){ POP_AF(); };
 
     opcode_lookup[0x02] = [this](){ LD_P(BC, A); };
     opcode_lookup[0x12] = [this](){ LD_P(DE, A); };
@@ -214,9 +217,9 @@ void CPU::init(){
     opcode_lookup[0x95] = [this](){ SUB(L); };
     opcode_lookup[0xa5] = [this](){ AND(L); };
     opcode_lookup[0xb5] = [this](){ OR (L); };
-    opcode_lookup[0xc5] = [this](){ PUSH(B, C); };
-    opcode_lookup[0xd5] = [this](){ PUSH(D, E); };
-    opcode_lookup[0xe5] = [this](){ PUSH(H, L); };
-    opcode_lookup[0xf5] = [this](){};
+    opcode_lookup[0xc5] = [this](){ PUSH(BC); };
+    opcode_lookup[0xd5] = [this](){ PUSH(DE); };
+    opcode_lookup[0xe5] = [this](){ PUSH(HL); };
+    opcode_lookup[0xf5] = [this](){ PUSH(AF); };
 
 }
