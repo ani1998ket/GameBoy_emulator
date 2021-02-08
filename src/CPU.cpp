@@ -36,12 +36,17 @@ Pointer combine(Register hi, Register lo)
 void CPU::fetch()
 {
     opcode = p_mmu->read(PC++);
+    if (opcode == 0xcb)
+    {
+        opcode = p_mmu->read(PC++);
+        cb = 1;
+    }
 }
 
 void CPU::decode()
 {
     int args = instruction_data[opcode].length - 1;
-    if( args > 0 || opcode == 0xcb)
+    if( args > 0 )
         arg1 = p_mmu->read(PC++);
     if( args > 1 )
         arg2 = p_mmu->read(PC++);
@@ -49,9 +54,9 @@ void CPU::decode()
 
 void CPU::execute()
 {
-    if (opcode == 0xcb)
+    if (cb = 1)
     {
-        cb_opcode_lookup[arg1]();
+        cb_opcode_lookup[opcode]();
     }
     else
     {
