@@ -44,7 +44,7 @@ void CPU::reset()
     PC = 0;
 }
 
-Pointer combine(Register hi, Register lo)
+Pointer CPU::combine(Register hi, Register lo)
 {
     Pointer result = (hi<<8) + lo;
     return result;
