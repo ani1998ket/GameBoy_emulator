@@ -77,8 +77,11 @@ private:
     void RR (Register &r);
     void RR_16(Pointer &r);
     void SLA(Register &r);
+    void SLA_16(Pointer &r);
     void SRA(Register &r);
+    void SRA_16(Pointer &r);
     void SRL(Register &r);
+    void SRL_16(Pointer &r);
     void BIT(int bit_ind, Register &r);
     void SET(int bit_ind, Register &r);
     void RES(int bit_ind, Register &r);

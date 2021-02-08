@@ -140,6 +140,19 @@ void CPU::SLA(Register &r)
     F.H = 0;
 }
 
+void CPU::SLA_16(Pointer &r)
+{
+    F.C = r>>15;
+    Pointer temp = r<<1;
+    r = temp;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
 void CPU::SRA(Register &r)
 {
     F.C = r<<7;
@@ -153,10 +166,30 @@ void CPU::SRA(Register &r)
     F.H = 0;
 }
 
+void CPU::SRA_16(Pointer &r)
+{
+    F.C = r<<15;
+    Pointer temp = (r>>1)+(r&(0b1000000000000000));
+    r = temp;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
 void CPU::SRL(Register &r)
 {
     F.C = r<<7;
     Byte temp = r>>1;
+    r = temp;
+}
+
+void CPU::SRL_16(Pointer &r)
+{
+    F.C = r<<15;
+    Pointer temp = r>>1;
     r = temp;
 }
 
@@ -254,7 +287,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x23] = [this](){ SLA(E) };
     cb_opcode_lookup[0x24] = [this](){ SLA(H) };
     cb_opcode_lookup[0x25] = [this](){ SLA(L) };
-    cb_opcode_lookup[0x26] = [this](){};
+    cb_opcode_lookup[0x26] = [this](){ SLA_16(HL) };
     cb_opcode_lookup[0x27] = [this](){ SLA(A) };
     cb_opcode_lookup[0x28] = [this](){ SRA(B) };
     cb_opcode_lookup[0x29] = [this](){ SRA(C) };
@@ -262,7 +295,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x2b] = [this](){ SRA(E) };
     cb_opcode_lookup[0x2c] = [this](){ SRA(H) };
     cb_opcode_lookup[0x2d] = [this](){ SRA(L) };
-    cb_opcode_lookup[0x2e] = [this](){};
+    cb_opcode_lookup[0x2e] = [this](){ SRA_16(HL) };
     cb_opcode_lookup[0x2f] = [this](){ SRA(A) };
 
     cb_opcode_lookup[0x30] = [this](){ SWAP(B) };
@@ -279,7 +312,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x3b] = [this](){ SRL(E) };
     cb_opcode_lookup[0x3c] = [this](){ SRL(H) };
     cb_opcode_lookup[0x3d] = [this](){ SRL(L) };
-    cb_opcode_lookup[0x3e] = [this](){};
+    cb_opcode_lookup[0x3e] = [this](){ SRL_16(HL) };
     cb_opcode_lookup[0x3f] = [this](){ SRL(A) };
 
     cb_opcode_lookup[0x40] = [this](){ BIT(0,B) };
