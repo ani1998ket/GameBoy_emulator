@@ -5,8 +5,12 @@
 #include "utils.h"
 #include "MMU.h"
 
-struct Flag{
+class Flag{
+    public:
     bool Z, N, H, C;
+    Flag();
+    void reset();
+    Register get_register();
 };
 
 class CPU{
@@ -47,7 +51,7 @@ private:
 
     // 16 bit load commands
     void LD16_R(Register& hi, Register& lo, Pointer value );
-    void LD16_R(Pointer r, Pointer value);
+    void LD16_R(Pointer& r, Pointer value);
 
     // ALU
     void ADD( Byte value );

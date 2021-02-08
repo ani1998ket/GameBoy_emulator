@@ -5,6 +5,21 @@
 #define DE combine(D, E)
 #define HL combine(H, L)
 
+Flag::Flag(){
+    reset();
+}
+void Flag::reset(){
+    Z = 0;
+    N = 0;
+    H = 0;
+    C = 0;
+}
+Register Flag::get_register(){
+   Register temp = 0;
+   temp = (Z << 7) + (N << 6) + (H << 5) + (C<<4);
+   return temp;  
+}
+
 CPU::CPU()
 {
 
@@ -22,7 +37,9 @@ void CPU::reset()
     C = 0; 
     D = 0; 
     E = 0;
-    F.Z = F.N = F.H = F.C = false;
+    F.reset();
+    H = 0;
+    L = 0;
     SP = 0;
     PC = 0;
 }
@@ -75,7 +92,7 @@ void CPU::LD16_R(Register& hi, Register& lo, Pointer value )
     hi = (Byte)(value >> 8);
 }
 
-void CPU::LD16_R(Pointer r, Pointer value)
+void CPU::LD16_R(Pointer& r, Pointer value)
 {
     r = value;
 }
