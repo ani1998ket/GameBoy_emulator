@@ -19,8 +19,8 @@ public:
 
     CPU();
     void connect(MMU* p_mmu);
+    
     void reset();
-
     void step();
 
 private:
@@ -35,7 +35,6 @@ private:
     std::function< void() > opcode_lookup[256];
 
 private:
-
     void fetch();
     void decode();
     void execute();

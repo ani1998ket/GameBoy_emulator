@@ -9,12 +9,14 @@
 Flag::Flag(){
     reset();
 }
+
 void Flag::reset(){
     Z = 0;
     N = 0;
     H = 0;
     C = 0;
 }
+
 Register Flag::get_register() const {
    Register temp = 0;
    temp = (Z << 7) + (N << 6) + (H << 5) + (C<<4);
@@ -43,6 +45,12 @@ void CPU::reset()
     L = 0;
     SP = 0;
     PC = 0;
+}
+
+void CPU::step(){
+    fetch();
+    decode();
+    execute();
 }
 
 Pointer CPU::combine(Byte hi, Byte lo)
