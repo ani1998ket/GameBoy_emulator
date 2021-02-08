@@ -25,6 +25,7 @@ private:
     Pointer SP, PC;
     Flag F;
     MMU* p_mmu;
+    bool cb=0;
 
     Byte opcode;
     Byte arg1, arg2;
