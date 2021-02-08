@@ -18,6 +18,19 @@ void CPU::RLC(Register &r)
     F.H = 0;
 }
 
+void CPU::RLC_16(Pointer &r)
+{
+    F.C = r>>15;
+    Pointer temp = r<<1;
+    r = temp + F.C;
+    if (r == 0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
 void CPU::RRC(Register &r)
 {
     Byte temp1 = r<<7;
@@ -39,10 +52,44 @@ void CPU::RRC(Register &r)
     F.H = 0;
 }
 
+void CPU::RRC_16(Pointer &r)
+{
+    Pointer temp1 = r<<15;
+    Pointer temp2 = r>>1;
+    r = temp1 + temp2;
+    if (r == 0)
+    {
+        F.Z = 1;
+    }
+    if (temp1>0)
+    {
+        F.C = 1;
+    }
+    else
+    {
+        F.C = 0;
+    }
+    F.N = 0;
+    F.H = 0;
+}
 void CPU::RL(Register &r)
 {
     bool temp1 = r>>7;
     Byte temp2 = r<<1;
+    r = temp2 + F.C;
+    F.C = temp1;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+
+void CPU::RL_16(Pointer &r)
+{
+    bool temp1 = r>>15;
+    Pointer temp2 = r<<1;
     r = temp2 + F.C;
     F.C = temp1;
     if (r==0)
@@ -58,6 +105,19 @@ void CPU::RR(Register &r)
     bool temp1 = r<<7;
     Byte temp2 = r>>1;
     r = temp2+(F.C<<7);
+    F.C = temp1;
+    if (r==0)
+    {
+        F.Z = 1;
+    }
+    F.N = 0;
+    F.H = 0;
+}
+void CPU::RR_16(Pointer &r)
+{
+    bool temp1 = r<<15;
+    Pointer temp2 = r>>1;
+    r = temp2+(F.C<<15);
     F.C = temp1;
     if (r==0)
     {
@@ -160,7 +220,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x03] = [this](){ RLC(E); };
     cb_opcode_lookup[0x04] = [this](){ RLC(H); };
     cb_opcode_lookup[0x05] = [this](){ RLC(L); };
-    cb_opcode_lookup[0x06] = [this](){};
+    cb_opcode_lookup[0x06] = [this](){ RLC_16(HL); };
     cb_opcode_lookup[0x07] = [this](){ RLC(A); };
     cb_opcode_lookup[0x08] = [this](){ RRC(B); };
     cb_opcode_lookup[0x09] = [this](){ RRC(C); };
@@ -168,7 +228,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x0b] = [this](){ RRC(E); };
     cb_opcode_lookup[0x0c] = [this](){ RRC(H); };
     cb_opcode_lookup[0x0d] = [this](){ RRC(L); };
-    cb_opcode_lookup[0x0e] = [this](){};
+    cb_opcode_lookup[0x0e] = [this](){ RRC_16(HL); };
     cb_opcode_lookup[0x0f] = [this](){ RRC(A); };
 
     cb_opcode_lookup[0x10] = [this](){ RL(B); };
@@ -177,7 +237,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x13] = [this](){ RL(E); };
     cb_opcode_lookup[0x14] = [this](){ RL(H); };
     cb_opcode_lookup[0x15] = [this](){ RL(L); };
-    cb_opcode_lookup[0x16] = [this](){};
+    cb_opcode_lookup[0x16] = [this](){ RL_16(HL) };
     cb_opcode_lookup[0x17] = [this](){ RL(A); };
     cb_opcode_lookup[0x18] = [this](){ RR(B); };
     cb_opcode_lookup[0x19] = [this](){ RR(C); };
@@ -185,7 +245,7 @@ void CPU::init_cb(){
     cb_opcode_lookup[0x1b] = [this](){ RR(E); };
     cb_opcode_lookup[0x1c] = [this](){ RR(H); };
     cb_opcode_lookup[0x1d] = [this](){ RR(L); };
-    cb_opcode_lookup[0x1e] = [this](){};
+    cb_opcode_lookup[0x1e] = [this](){ RR_16(HL) };
     cb_opcode_lookup[0x1f] = [this](){ RR(A); };
 
     cb_opcode_lookup[0x20] = [this](){ SLA(B) };

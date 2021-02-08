@@ -69,9 +69,13 @@ private:
 
     //cb
     void RLC(Register &r);
+    void RLC_16(Pointer &r);
     void RRC(Register &r);
+    void RRC_16(Pointer &r);
     void RL (Register &r);
+    void RL_16(Pointer &r);
     void RR (Register &r);
+    void RR_16(Pointer &r);
     void SLA(Register &r);
     void SRA(Register &r);
     void SRL(Register &r);
