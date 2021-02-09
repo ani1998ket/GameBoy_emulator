@@ -54,7 +54,7 @@ void CPU::decode()
 
 void CPU::execute()
 {
-    if (cb = 1)
+    if (cb == 1)
     {
         cb_opcode_lookup[opcode]();
     }
