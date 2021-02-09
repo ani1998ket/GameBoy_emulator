@@ -15,6 +15,7 @@ void Flag::reset(){
     H = 0;
     C = 0;
 }
+
 Register Flag::get_register() const {
    Register temp = 0;
    temp = (Z << 7) + (N << 6) + (H << 5) + (C<<4);
