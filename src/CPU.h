@@ -10,7 +10,7 @@ class Flag{
     bool Z, N, H, C;
     Flag();
     void reset();
-    Register get_register();
+    Register get_register() const;
 };
 
 class CPU{
@@ -40,9 +40,15 @@ private:
     void decode();
     void execute();
 
-    Pointer combine( Register hi, Register lo);
+    Pointer combine( Byte hi, Byte lo);
     void init();
 
+    void NOP();
+    void STOP();
+    void HALT();    
+    void DI();
+    void EI();
+    
     // 8 bit load commands
     void LD_R   (Register& r, Byte value);
     void LD_R_P (Register& r, Pointer address);
@@ -66,9 +72,14 @@ private:
     void INC_P(Pointer p);
     void DEC_P(Pointer p);
 
+    void INC16(Register& hi, Register& lo);
+    void INC16(Pointer& r);
+    void DEC16(Register& hi, Register& lo);
+    void DEC16(Pointer& r);
+
     //Stack operations
     void POP (Register& hi, Register& lo);
-    void PUSH(Register& hi, Register& lo);
-
+    void PUSH( Pointer value );
+    void POP_AF();
 };
     
