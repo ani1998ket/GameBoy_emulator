@@ -1,4 +1,4 @@
-OBJ = obj/Gameboy.o obj/MMU.o obj/CPU.o
+OBJ = obj/Gameboy.o obj/MMU.o obj/CPU.o obj/CPU_init.o
 HEADERS = src/Gameboy.h src/MMU.h src/CPU.h src/utils.h src/InstructionSet.h
 INC = -I src/
 
