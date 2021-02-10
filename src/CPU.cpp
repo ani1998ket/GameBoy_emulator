@@ -6,6 +6,7 @@
 #define DE combine(D, E)
 #define HL combine(H, L)
 
+
 Flag::Flag(){
     reset();
 }
@@ -131,9 +132,35 @@ void CPU::PUSH( Pointer value ){}
 // temporary fix
 void CPU::POP_AF(){}
 
+void CPU::JR( Condition c, Byte offset ){
+    JP( c, PC + offset );
+}
+void CPU::JP( Condition c, Pointer address ){
+    switch(c){
+        case Condition::NZ:
+            if( F.Z == false ) PC = address;
+        break;
+        case Condition::Z:
+            if( F.Z == true ) PC = address;
+        break;
+        case Condition::NC:
+            if( F.C == false ) PC = address;
+        break;
+        case Condition::C:
+            if( F.C == true ) PC = address;
+        break;
+        case Condition::NONE:
+            PC = address;
+        break;
+        default:
+        break;
+    }
+}
+
+
 void CPU::init(){
     opcode_lookup[0x00] = [this](){ NOP(); };
-    opcode_lookup[0x10] = [this](){};
+    opcode_lookup[0x10] = [this](){ STOP(); };
     opcode_lookup[0x20] = [this](){};
     opcode_lookup[0x30] = [this](){};
     opcode_lookup[0x40] = [this](){ LD_R(B, B); };

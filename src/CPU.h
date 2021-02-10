@@ -13,6 +13,10 @@ class Flag{
     Register get_register() const;
 };
 
+enum class Condition{
+    NZ, Z, NC, C, NONE
+};
+
 class CPU{
 
 public:
@@ -80,5 +84,9 @@ private:
     void POP (Register& hi, Register& lo);
     void PUSH( Pointer value );
     void POP_AF();
+
+    // Jump operations
+    void JR( Condition c, Byte offset );
+    void JP( Condition c, Pointer address );
 };
     
