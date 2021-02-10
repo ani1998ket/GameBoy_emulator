@@ -161,8 +161,8 @@ void CPU::JP( Condition c, Pointer address ){
 void CPU::init(){
     opcode_lookup[0x00] = [this](){ NOP(); };
     opcode_lookup[0x10] = [this](){ STOP(); };
-    opcode_lookup[0x20] = [this](){};
-    opcode_lookup[0x30] = [this](){};
+    opcode_lookup[0x20] = [this](){ JR(Condition::NZ, arg1); };
+    opcode_lookup[0x30] = [this](){ JR(Condition::NC, arg1);};
     opcode_lookup[0x40] = [this](){ LD_R(B, B); };
     opcode_lookup[0x50] = [this](){ LD_R(D, B); };
     opcode_lookup[0x60] = [this](){ LD_R(H, B); };
@@ -205,8 +205,8 @@ void CPU::init(){
     opcode_lookup[0x92] = [this](){ SUB(D); };
     opcode_lookup[0xa2] = [this](){ AND(D); };
     opcode_lookup[0xb2] = [this](){ OR (D); };
-    opcode_lookup[0xc2] = [this](){};
-    opcode_lookup[0xd2] = [this](){};
+    opcode_lookup[0xc2] = [this](){ JP(Condition::NZ, combine(arg2, arg1)); };
+    opcode_lookup[0xd2] = [this](){ JP(Condition::NC, combine(arg2, arg1)); };
     opcode_lookup[0xe2] = [this](){ LD_P(0xff00 + C, A); };
     opcode_lookup[0xf2] = [this](){ LD_R(A, 0xff00 + C); };
 
@@ -222,7 +222,7 @@ void CPU::init(){
     opcode_lookup[0x93] = [this](){ SUB(E); };
     opcode_lookup[0xa3] = [this](){ AND(E); };
     opcode_lookup[0xb3] = [this](){ OR (E); };
-    opcode_lookup[0xc3] = [this](){};
+    opcode_lookup[0xc3] = [this](){ JP(Condition::NONE, combine(arg2, arg1)); };
     opcode_lookup[0xd3] = [this](){};
     opcode_lookup[0xe3] = [this](){};
     opcode_lookup[0xf3] = [this](){};
@@ -296,9 +296,9 @@ void CPU::init(){
     opcode_lookup[0xf7] = [this](){};
 
     opcode_lookup[0x08] = [this](){ /* changes */ }; 
-    opcode_lookup[0x18] = [this](){ };
-    opcode_lookup[0x28] = [this](){ };
-    opcode_lookup[0x38] = [this](){ };
+    opcode_lookup[0x18] = [this](){ JR(Condition::NONE, arg1); };
+    opcode_lookup[0x28] = [this](){ JR(Condition::Z, arg1); };
+    opcode_lookup[0x38] = [this](){ JR(Condition::C, arg1); };
     opcode_lookup[0x48] = [this](){ LD_R(C, B); };
     opcode_lookup[0x58] = [this](){ LD_R(E, B); };
     opcode_lookup[0x68] = [this](){ LD_R(L, B); };
@@ -326,7 +326,7 @@ void CPU::init(){
     opcode_lookup[0xb9] = [this](){ CP (C); };
     opcode_lookup[0xc9] = [this](){};
     opcode_lookup[0xd9] = [this](){};
-    opcode_lookup[0xe9] = [this](){};
+    opcode_lookup[0xe9] = [this](){ JP(Condition::NONE, HL); };
     opcode_lookup[0xf9] = [this](){};
 
     opcode_lookup[0x0a] = [this](){ LD_R_P(A, BC); }; 
@@ -341,8 +341,8 @@ void CPU::init(){
     opcode_lookup[0x9a] = [this](){ SBC(D); };
     opcode_lookup[0xaa] = [this](){ XOR(D); };
     opcode_lookup[0xba] = [this](){ CP (D); };
-    opcode_lookup[0xca] = [this](){};
-    opcode_lookup[0xda] = [this](){};
+    opcode_lookup[0xca] = [this](){ JP(Condition::Z, combine(arg2, arg1)); };
+    opcode_lookup[0xda] = [this](){ JP(Condition::C, combine(arg2, arg1)); };
     opcode_lookup[0xea] = [this](){};
     opcode_lookup[0xfa] = [this](){};
 
