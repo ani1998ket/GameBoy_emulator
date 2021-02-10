@@ -11,6 +11,7 @@ class Flag{
     Flag();
     void reset();
     Register get_register() const;
+    void set_register( Byte value );
 };
 
 enum class Condition{
@@ -60,6 +61,7 @@ private:
     // 16 bit load commands
     void LD16_R(Register& hi, Register& lo, Pointer value );
     void LD16_R(Pointer& r, Pointer value);
+    void LD16_P(Pointer address, Pointer value);
 
     // ALU
     void ADD( Byte value );
@@ -88,5 +90,6 @@ private:
     // Jump operations
     void JR( Condition c, Byte offset );
     void JP( Condition c, Pointer address );
+    void RET( Condition c );
 };
     

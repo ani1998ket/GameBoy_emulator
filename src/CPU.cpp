@@ -19,6 +19,13 @@ Register Flag::get_register() const {
    return temp;  
 }
 
+void Flag::set_register(Byte value) {
+    Z = (bool)( value & (1<<7) );
+    N = (bool)( value & (1<<6) );
+    H = (bool)( value & (1<<5) );
+    C = (bool)( value & (1<<4) ); 
+}
+
 CPU::CPU()
 {
 
@@ -106,6 +113,15 @@ void CPU::LD16_R(Pointer& r, Pointer value)
     r = value;
 }
 
+void CPU::LD16_P(Pointer address, Pointer value)
+{
+    Byte low = static_cast<Byte>(0xff & value);
+    Byte high = static_cast<Byte>(value >> 8);
+    p_mmu->write(address, low);
+    p_mmu->write(address + 1, high);
+}
+
+
 void CPU::ADD( Byte value ){}
 void CPU::SUB( Byte value ){}
 void CPU::AND( Byte value ){}
@@ -122,15 +138,36 @@ void CPU::INC16(Register& hi, Register& lo){}
 void CPU::INC16(Pointer& r){}
 void CPU::DEC16(Register& hi, Register& lo){}
 void CPU::DEC16(Pointer& r){}
-void CPU::POP (Register& hi, Register& lo){}
-void CPU::PUSH( Pointer value ){}
-// temporary fix
-void CPU::POP_AF(){}
 
-void CPU::JR( Condition c, Byte offset ){
+void CPU::POP (Register& hi, Register& lo)
+{
+    Byte low = p_mmu->read(SP);
+    Byte high = p_mmu->read(SP+1);
+    SP += 2;
+    LD16_R(hi, lo, combine(high,low) );
+}
+
+void CPU::PUSH( Pointer value )
+{
+    SP -= 2;
+    LD16_P(SP, value);
+}
+// temporary fix
+void CPU::POP_AF(){
+    Byte low = p_mmu->read(SP);
+    Byte high = p_mmu->read(SP+1);
+    SP += 2;
+    F.set_register(low);
+    LD_R(A, high);
+}
+
+void CPU::JR( Condition c, Byte offset )
+{
     JP( c, PC + offset );
 }
-void CPU::JP( Condition c, Pointer address ){
+
+void CPU::JP( Condition c, Pointer address )
+{
     switch(c){
         case Condition::NZ:
             if( F.Z == false ) PC = address;
