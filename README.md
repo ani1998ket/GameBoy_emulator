@@ -1,4 +1,4 @@
-![Gameboy icon](/res/logo.jpg)
+![Gameboy icon](/res/logo_small.jpg)
 
 # A gameboy emulator written using C++
 
