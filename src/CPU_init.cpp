@@ -18,8 +18,8 @@ void CPU::init(){
     opcode_lookup[0x90] = [this](){ SUB(B); };
     opcode_lookup[0xa0] = [this](){ AND(B); };
     opcode_lookup[0xb0] = [this](){ OR (B); };
-    opcode_lookup[0xc0] = [this](){};
-    opcode_lookup[0xd0] = [this](){};
+    opcode_lookup[0xc0] = [this](){ RET(Condition::NZ); };
+    opcode_lookup[0xd0] = [this](){ RET(Condition::NC); };
     opcode_lookup[0xe0] = [this](){ LD_P(0xff00 + arg1, A); };
     opcode_lookup[0xf0] = [this](){ LD_R(A, 0xff00 + arg1); };
 
@@ -70,9 +70,9 @@ void CPU::init(){
     opcode_lookup[0xa3] = [this](){ AND(E); };
     opcode_lookup[0xb3] = [this](){ OR (E); };
     opcode_lookup[0xc3] = [this](){ JP(Condition::NONE, combine(arg2, arg1)); };
-    opcode_lookup[0xd3] = [this](){};
-    opcode_lookup[0xe3] = [this](){};
-    opcode_lookup[0xf3] = [this](){};
+    opcode_lookup[0xd3] = [this](){/*empty*/};
+    opcode_lookup[0xe3] = [this](){/*empty*/};
+    opcode_lookup[0xf3] = [this](){ DI(); };
 
     opcode_lookup[0x04] = [this](){ INC_R(B); };
     opcode_lookup[0x14] = [this](){ INC_R(D); };
@@ -88,8 +88,8 @@ void CPU::init(){
     opcode_lookup[0xb4] = [this](){ OR (H); };
     opcode_lookup[0xc4] = [this](){};
     opcode_lookup[0xd4] = [this](){};
-    opcode_lookup[0xe4] = [this](){};
-    opcode_lookup[0xf4] = [this](){};
+    opcode_lookup[0xe4] = [this](){/*empty*/};
+    opcode_lookup[0xf4] = [this](){/*empty*/};
 
     opcode_lookup[0x05] = [this](){ DEC_R(B); };
     opcode_lookup[0x15] = [this](){ DEC_R(D); };
@@ -154,8 +154,8 @@ void CPU::init(){
     opcode_lookup[0x98] = [this](){ SBC(B); };
     opcode_lookup[0xa8] = [this](){ XOR(B); };
     opcode_lookup[0xb8] = [this](){ CP (B); };
-    opcode_lookup[0xc8] = [this](){};
-    opcode_lookup[0xd8] = [this](){};
+    opcode_lookup[0xc8] = [this](){ RET(Condition::Z); };
+    opcode_lookup[0xd8] = [this](){ RET(Condition::C); };
     opcode_lookup[0xe8] = [this](){};
     opcode_lookup[0xf8] = [this](){};
 
@@ -171,8 +171,8 @@ void CPU::init(){
     opcode_lookup[0x99] = [this](){ SBC(C); };
     opcode_lookup[0xa9] = [this](){ XOR(C); };
     opcode_lookup[0xb9] = [this](){ CP (C); };
-    opcode_lookup[0xc9] = [this](){};
-    opcode_lookup[0xd9] = [this](){};
+    opcode_lookup[0xc9] = [this](){ RET(Condition::NONE); };
+    opcode_lookup[0xd9] = [this](){ RET(Condition::NONE); EI(); };
     opcode_lookup[0xe9] = [this](){ JP(Condition::NONE, HL); };
     opcode_lookup[0xf9] = [this](){};
 
@@ -205,10 +205,10 @@ void CPU::init(){
     opcode_lookup[0x9b] = [this](){ SBC(E); };
     opcode_lookup[0xab] = [this](){ XOR(E); };
     opcode_lookup[0xbb] = [this](){ CP (E); };
-    opcode_lookup[0xcb] = [this](){};
-    opcode_lookup[0xdb] = [this](){};
-    opcode_lookup[0xeb] = [this](){};
-    opcode_lookup[0xfb] = [this](){};
+    opcode_lookup[0xcb] = [this](){/* CB Prefix */ };
+    opcode_lookup[0xdb] = [this](){/*empty*/};
+    opcode_lookup[0xeb] = [this](){/*empty*/};
+    opcode_lookup[0xfb] = [this](){ EI(); };
 
     opcode_lookup[0x0c] = [this](){ INC_R(C);  }; 
     opcode_lookup[0x1c] = [this](){ INC_R(E);  };
@@ -224,8 +224,8 @@ void CPU::init(){
     opcode_lookup[0xbc] = [this](){ CP (H); };
     opcode_lookup[0xcc] = [this](){};
     opcode_lookup[0xdc] = [this](){};
-    opcode_lookup[0xec] = [this](){};
-    opcode_lookup[0xfc] = [this](){};
+    opcode_lookup[0xec] = [this](){/*empty*/};
+    opcode_lookup[0xfc] = [this](){/*empty*/};
 
     opcode_lookup[0x0d] = [this](){ DEC_R(C); }; 
     opcode_lookup[0x1d] = [this](){ DEC_R(E); };
@@ -240,9 +240,9 @@ void CPU::init(){
     opcode_lookup[0xad] = [this](){ XOR(L); };
     opcode_lookup[0xbd] = [this](){ CP (L); };
     opcode_lookup[0xcd] = [this](){};
-    opcode_lookup[0xdd] = [this](){};
-    opcode_lookup[0xed] = [this](){};
-    opcode_lookup[0xfd] = [this](){};
+    opcode_lookup[0xdd] = [this](){/*empty*/};
+    opcode_lookup[0xed] = [this](){/*empty*/};
+    opcode_lookup[0xfd] = [this](){/*empty*/};
 
     opcode_lookup[0x0e] = [this](){ LD_R(C, arg1); }; 
     opcode_lookup[0x1e] = [this](){ LD_R(E, arg1); };

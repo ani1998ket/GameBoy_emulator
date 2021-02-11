@@ -84,8 +84,12 @@ void CPU::execute()
 void CPU::NOP(){}
 void CPU::STOP(){}
 void CPU::HALT(){}
-void CPU::DI(){}
-void CPU::EI(){}
+void CPU::DI(){
+    p_mmu->write(0xffff, 0);
+}
+void CPU::EI(){
+    p_mmu->write(0xffff, 1);
+}
 
 void CPU::LD_R(Register& r, Byte value)
 {
@@ -300,6 +304,31 @@ void CPU::JP( Condition c, Pointer address )
         break;
         case Condition::NONE:
             PC = address;
+        break;
+        default:
+        break;
+    }
+}
+
+void CPU::RET( Condition c )
+{
+    Byte hi, lo;
+    POP(hi, lo);
+    Pointer address = combine(hi, lo);
+    switch(c){
+        case Condition::NZ:
+            if( F.Z == false ) PC = address;
+        break;
+        case Condition::Z:
+            if( F.Z == true ) PC = address;
+        break;
+        case Condition::NC:
+            if( F.C == false ) PC = address;
+        break;
+        case Condition::C:
+            if( F.C == true ) PC = address;
+        break;
+        case Condition::NONE:
         break;
         default:
         break;
