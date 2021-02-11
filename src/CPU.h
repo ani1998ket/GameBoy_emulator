@@ -97,5 +97,6 @@ private:
     void JP( Condition c, Pointer address );
     void RET( Condition c );
     void RST( Pointer offset );
+    void CALL( Condition c, Pointer address );
 };
     

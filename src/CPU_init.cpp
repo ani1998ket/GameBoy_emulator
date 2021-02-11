@@ -87,8 +87,8 @@ void CPU::init()
     opcode_lookup[0x94] = [this](){ SUB(H); };
     opcode_lookup[0xa4] = [this](){ AND(H); };
     opcode_lookup[0xb4] = [this](){ OR (H); };
-    opcode_lookup[0xc4] = [this](){};
-    opcode_lookup[0xd4] = [this](){};
+    opcode_lookup[0xc4] = [this](){ CALL(Condition::NZ, combine(arg2, arg1)); };
+    opcode_lookup[0xd4] = [this](){ CALL(Condition::NC, combine(arg2, arg1)); };
     opcode_lookup[0xe4] = [this](){/*empty*/};
     opcode_lookup[0xf4] = [this](){/*empty*/};
 
@@ -223,8 +223,8 @@ void CPU::init()
     opcode_lookup[0x9c] = [this](){ SBC(H); };
     opcode_lookup[0xac] = [this](){ XOR(H); };
     opcode_lookup[0xbc] = [this](){ CP (H); };
-    opcode_lookup[0xcc] = [this](){};
-    opcode_lookup[0xdc] = [this](){};
+    opcode_lookup[0xcc] = [this](){ CALL(Condition::Z, combine(arg2, arg1)); };
+    opcode_lookup[0xdc] = [this](){ CALL(Condition::C, combine(arg2, arg1)); };
     opcode_lookup[0xec] = [this](){/*empty*/};
     opcode_lookup[0xfc] = [this](){/*empty*/};
 
@@ -240,7 +240,7 @@ void CPU::init()
     opcode_lookup[0x9d] = [this](){ SBC(L); };
     opcode_lookup[0xad] = [this](){ XOR(L); };
     opcode_lookup[0xbd] = [this](){ CP (L); };
-    opcode_lookup[0xcd] = [this](){};
+    opcode_lookup[0xcd] = [this](){ CALL(Condition::NONE, combine(arg2, arg1)); };
     opcode_lookup[0xdd] = [this](){/*empty*/};
     opcode_lookup[0xed] = [this](){/*empty*/};
     opcode_lookup[0xfd] = [this](){/*empty*/};

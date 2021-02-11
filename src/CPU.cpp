@@ -349,7 +349,14 @@ void CPU::RET( Condition c )
     }
 }
 
-void CPU::RST( Pointer offset ){
-    PUSH( PC );
+void CPU::RST( Pointer offset )
+{
+    PUSH( PC - 1 ); // Current address 
     JP( Condition::NONE, offset );
+}
+
+void CPU::CALL( Condition c, Pointer address )
+{
+    PUSH( PC ); // Next address 
+    JP( c, address );
 }
