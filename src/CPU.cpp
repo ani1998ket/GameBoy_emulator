@@ -122,22 +122,138 @@ void CPU::LD16_P(Pointer address, Pointer value)
 }
 
 
-void CPU::ADD( Byte value ){}
-void CPU::SUB( Byte value ){}
-void CPU::AND( Byte value ){}
-void CPU::OR ( Byte value ){}
-void CPU::ADC( Byte value ){}
-void CPU::SBC( Byte value ){}
-void CPU::XOR( Byte value ){}
-void CPU::CP ( Byte value ){}
-void CPU::INC_R(Register& r){}
-void CPU::DEC_R(Register& r){}
-void CPU::INC_P(Pointer p){}
-void CPU::DEC_P(Pointer p){}
-void CPU::INC16(Register& hi, Register& lo){}
-void CPU::INC16(Pointer& r){}
-void CPU::DEC16(Register& hi, Register& lo){}
-void CPU::DEC16(Pointer& r){}
+void CPU::ADD( Byte value )
+{
+    Byte nibble_result = low_nibble(A) + low_nibble(value);
+    if( high_nibble(nibble_result) > 0 ) F.H = true;
+
+    Pointer result = A + value;
+    if( high_byte(result) > 0 ) F.C = true;
+
+    if( result == 0 ) F.Z = true;
+    F.N = false;
+
+    A = (Byte)result;
+}
+
+void CPU::SUB( Byte value )
+{
+    if( low_nibble(A) < low_nibble(value) ) F.H = true;
+    if( A < value ) F.C = true;
+
+    Pointer result = A - value;
+    if( result == 0 ) F.Z = true;
+    F.N = true;
+
+    A = (Byte)result;
+}
+
+void CPU::AND( Byte value )
+{
+    A = A & value;
+    if(A == 0) F.Z = true;
+    F.N = false;
+    F.H = true;
+    F.C = false;
+}
+
+void CPU::OR ( Byte value )
+{
+    A = A | value;
+    if(A == 0) F.Z = true;
+    F.N = false;
+    F.H = false;
+    F.C = false;
+}
+
+void CPU::ADC( Byte value ){
+    ADD( value + (Byte)(F.C) );
+}
+
+void CPU::SBC( Byte value ){
+    SUB( value + (Byte)(F.C) );
+}
+
+void CPU::XOR( Byte value ){
+    A = A ^ value;
+    if( A == 0 ) F.Z = true;
+    F.N = false;
+    F.H = false;
+    F.C = false;
+}
+
+void CPU::CP ( Byte value ){
+    if( low_nibble(A) < low_nibble(value) ) F.H = true;
+    if( A < value ) F.C = true;
+
+    Pointer result = A - value;
+    if( result == 0 ) F.Z = true;
+    F.N = true;
+}
+
+void CPU::INC_R(Register& r)
+{
+    Byte nibble_result = low_nibble(r) + 1;
+    if( high_nibble(nibble_result) > 0 ) F.H = true;
+
+    r = r + 1;
+    if( r == 0 ) F.Z = true;
+    F.N = false;
+}
+
+void CPU::DEC_R(Register& r)
+{
+    if( low_nibble(r) == 0 ) F.H = true;
+
+    r = r - 1;
+    if( r == 0 ) F.Z = true;
+    F.N = true;
+}
+
+void CPU::INC_P(Pointer p)
+{
+    Byte r = p_mmu->read(p);
+    Byte nibble_result = low_nibble(r) + 1;
+    if( high_nibble(nibble_result) > 0 ) F.H = true;
+
+    r = r + 1;
+    if( r == 0 ) F.Z = true;
+    F.N = false;
+    p_mmu->write(p, r);
+}
+
+void CPU::DEC_P(Pointer p)
+{
+    Byte r = p_mmu->read(p);
+    if( low_nibble(r) == 0 ) F.H = true;
+
+    r = r - 1;
+    if( r == 0 ) F.Z = true;
+    F.N = true;
+    p_mmu->write(p, r);
+}
+
+void CPU::INC16(Register& hi, Register& lo)
+{
+    Pointer result = combine(hi, lo) + 1;
+    LD16_R(hi, lo, result);
+}
+
+void CPU::INC16(Pointer& r)
+{
+    r++;
+}
+
+void CPU::DEC16(Register& hi, Register& lo)
+{
+    Pointer result = combine(hi, lo) - 1;
+    LD16_R(hi, lo, result);
+}
+
+void CPU::DEC16(Pointer& r)
+{
+    r--;
+}
 
 void CPU::POP (Register& hi, Register& lo)
 {
@@ -152,6 +268,7 @@ void CPU::PUSH( Pointer value )
     SP -= 2;
     LD16_P(SP, value);
 }
+
 // temporary fix
 void CPU::POP_AF(){
     Byte low = p_mmu->read(SP);

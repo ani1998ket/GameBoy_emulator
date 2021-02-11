@@ -6,7 +6,7 @@
 #include "MMU.h"
 
 class Flag{
-    public:
+public:
     bool Z, N, H, C;
     Flag();
     void reset();
