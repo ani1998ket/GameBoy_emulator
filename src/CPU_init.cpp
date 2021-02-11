@@ -138,10 +138,10 @@ void CPU::init()
     opcode_lookup[0x97] = [this](){ SUB(A); };
     opcode_lookup[0xa7] = [this](){ AND(A); };
     opcode_lookup[0xb7] = [this](){ OR (A); };
-    opcode_lookup[0xc7] = [this](){};
-    opcode_lookup[0xd7] = [this](){};
-    opcode_lookup[0xe7] = [this](){};
-    opcode_lookup[0xf7] = [this](){};
+    opcode_lookup[0xc7] = [this](){ RST(0x0000); };
+    opcode_lookup[0xd7] = [this](){ RST(0x0010); };
+    opcode_lookup[0xe7] = [this](){ RST(0x0020); };
+    opcode_lookup[0xf7] = [this](){ RST(0x0030); };
 
     opcode_lookup[0x08] = [this](){ /* changes */ }; 
     opcode_lookup[0x18] = [this](){ JR(Condition::NONE, arg1); };
@@ -274,9 +274,8 @@ void CPU::init()
     opcode_lookup[0x9f] = [this](){ SBC(A); };
     opcode_lookup[0xaf] = [this](){ XOR(A); };
     opcode_lookup[0xbf] = [this](){ CP (A); };
-    opcode_lookup[0xcf] = [this](){};
-    opcode_lookup[0xdf] = [this](){};
-    opcode_lookup[0xef] = [this](){};
-    opcode_lookup[0xff] = [this](){};
-    
+    opcode_lookup[0xcf] = [this](){ RST(0x0008); };
+    opcode_lookup[0xdf] = [this](){ RST(0x0018); };
+    opcode_lookup[0xef] = [this](){ RST(0x0028); };
+    opcode_lookup[0xff] = [this](){ RST(0x0038); };   
 }

@@ -348,3 +348,8 @@ void CPU::RET( Condition c )
         break;
     }
 }
+
+void CPU::RST( Pointer offset ){
+    PUSH( PC );
+    JP( Condition::NONE, offset );
+}

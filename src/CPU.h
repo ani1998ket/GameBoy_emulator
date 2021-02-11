@@ -96,5 +96,6 @@ private:
     void JR( Condition c, Byte offset );
     void JP( Condition c, Pointer address );
     void RET( Condition c );
+    void RST( Pointer offset );
 };
     
