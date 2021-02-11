@@ -6,16 +6,21 @@
 #include "MMU.h"
 
 class Flag{
+
 public:
+
     bool Z, N, H, C;
     Flag();
     void reset();
     Register get_register() const;
     void set_register( Byte value );
+
 };
 
 enum class Condition{
+
     NZ, Z, NC, C, NONE
+    
 };
 
 class CPU{

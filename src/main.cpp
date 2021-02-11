@@ -1,5 +1,6 @@
 #include "Gameboy.h"
 
-int main(){
+int main()
+{
     Gameboy gameboy;
 }

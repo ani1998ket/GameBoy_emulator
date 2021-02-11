@@ -5,7 +5,8 @@
 #define DE combine(D, E)
 #define HL combine(H, L)
 
-void CPU::init(){
+void CPU::init()
+{
     opcode_lookup[0x00] = [this](){ NOP(); };
     opcode_lookup[0x10] = [this](){ STOP(); };
     opcode_lookup[0x20] = [this](){ JR(Condition::NZ, arg1); };

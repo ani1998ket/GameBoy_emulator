@@ -1,13 +1,14 @@
 #pragma once
 
 #include <array>
-
 #include "utils.h"
 
 struct MemorySegment{
+
     Pointer start;
     Pointer end;
-    constexpr Pointer size() const { return (end-start)+1; }
+    inline constexpr Pointer size() const { return (end-start)+1; }
+
 };
 
 constexpr struct MemorySegment SEGMENT_ROM                  {0x0000,0x3fff};
@@ -28,7 +29,6 @@ class MMU{
 public:
 
     MMU();
-
     Byte read( Pointer address );
     void write( Pointer address, Byte value);
 

@@ -3,7 +3,9 @@
 #include "utils.h"
 
 struct Instruction{
+
     Byte length;
+    
 };
 
 const struct Instruction instruction_data[256] = {
