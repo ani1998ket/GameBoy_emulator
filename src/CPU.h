@@ -81,6 +81,10 @@ private:
     void DEC_R(Register& r);
     void INC_P(Pointer p);
     void DEC_P(Pointer p);
+    void DAA();
+    void SCF();
+    void CPL();
+    void CCF();
 
     void INC16(Register& hi, Register& lo);
     void INC16(Pointer& r);

@@ -128,8 +128,8 @@ void CPU::init()
 
     opcode_lookup[0x07] = [this](){ };
     opcode_lookup[0x17] = [this](){ };
-    opcode_lookup[0x27] = [this](){ };
-    opcode_lookup[0x37] = [this](){ };
+    opcode_lookup[0x27] = [this](){ DAA(); };
+    opcode_lookup[0x37] = [this](){ SCF(); };
     opcode_lookup[0x47] = [this](){ LD_R(B, A); };
     opcode_lookup[0x57] = [this](){ LD_R(D, A); };
     opcode_lookup[0x67] = [this](){ LD_R(H, A); };
@@ -143,7 +143,7 @@ void CPU::init()
     opcode_lookup[0xe7] = [this](){ RST(0x0020); };
     opcode_lookup[0xf7] = [this](){ RST(0x0030); };
 
-    opcode_lookup[0x08] = [this](){ /* changes */ }; 
+    opcode_lookup[0x08] = [this](){ LD16_P(combine(arg2, arg1), SP); }; 
     opcode_lookup[0x18] = [this](){ JR(Condition::NONE, arg1); };
     opcode_lookup[0x28] = [this](){ JR(Condition::Z, arg1); };
     opcode_lookup[0x38] = [this](){ JR(Condition::C, arg1); };
@@ -158,7 +158,7 @@ void CPU::init()
     opcode_lookup[0xc8] = [this](){ RET(Condition::Z); };
     opcode_lookup[0xd8] = [this](){ RET(Condition::C); };
     opcode_lookup[0xe8] = [this](){};
-    opcode_lookup[0xf8] = [this](){};
+    opcode_lookup[0xf8] = [this](){ LD16_R(H, L, SP + arg1); };
 
     opcode_lookup[0x09] = [this](){ }; 
     opcode_lookup[0x19] = [this](){ };
@@ -191,8 +191,8 @@ void CPU::init()
     opcode_lookup[0xba] = [this](){ CP (D); };
     opcode_lookup[0xca] = [this](){ JP(Condition::Z, combine(arg2, arg1)); };
     opcode_lookup[0xda] = [this](){ JP(Condition::C, combine(arg2, arg1)); };
-    opcode_lookup[0xea] = [this](){};
-    opcode_lookup[0xfa] = [this](){};
+    opcode_lookup[0xea] = [this](){ LD_P( combine(arg2, arg1), A); };
+    opcode_lookup[0xfa] = [this](){ LD_R_P(A, combine(arg2, arg1)); };
 
     opcode_lookup[0x0b] = [this](){ DEC16(B,C); }; 
     opcode_lookup[0x1b] = [this](){ DEC16(D,E); };
@@ -264,8 +264,8 @@ void CPU::init()
 
     opcode_lookup[0x0f] = [this](){ }; 
     opcode_lookup[0x1f] = [this](){ };
-    opcode_lookup[0x2f] = [this](){ };
-    opcode_lookup[0x3f] = [this](){ };
+    opcode_lookup[0x2f] = [this](){ CPL(); };
+    opcode_lookup[0x3f] = [this](){ CCF(); };
     opcode_lookup[0x4f] = [this](){ LD_R(C, A); };
     opcode_lookup[0x5f] = [this](){ LD_R(E, A); };
     opcode_lookup[0x6f] = [this](){ LD_R(L, A); };

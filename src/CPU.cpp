@@ -272,6 +272,31 @@ void CPU::DEC16(Pointer& r)
 {
     r--;
 }
+void CPU::DAA()
+{
+    /* Find implementation */
+}
+
+void CPU::SCF()
+{
+    F.N = false;
+    F.H = false;
+    F.C = true;
+}
+
+void CPU::CPL()
+{
+    A = A ^ 0xff; // Flip bits
+    F.N = true;
+    F.H = true;
+}
+
+void CPU::CCF()
+{
+    F.N = false;
+    F.H = false;
+    F.C = !F.C;
+}
 
 void CPU::POP (Register& hi, Register& lo)
 {
