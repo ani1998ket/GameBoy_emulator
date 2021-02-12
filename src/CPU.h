@@ -68,6 +68,8 @@ private:
     void LD16_R(Pointer& r, Pointer value);
     void LD16_P(Pointer address, Pointer value);
 
+    void LD_HL_SP_n();
+
     // ALU
     void ADD( Byte value );
     void SUB( Byte value );
@@ -85,6 +87,9 @@ private:
     void SCF();
     void CPL();
     void CCF();
+
+    void ADD16(Byte& hi1, Byte& lo1, Pointer v );
+    void ADD16(Pointer& r, Byte value );
 
     void INC16(Register& hi, Register& lo);
     void INC16(Pointer& r);

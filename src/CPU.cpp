@@ -139,6 +139,20 @@ void CPU::LD16_P(Pointer address, Pointer value)
     p_mmu->write(address + 1, high);
 }
 
+void CPU::LD_HL_SP_n()
+{
+    F.Z = F.N = false;
+
+    int8_t v = (int8_t)arg1;
+
+    Pointer half_result = low_byte(SP) + v;
+    if( high_byte( half_result ) > 0 ) F.H = true;
+
+    uint32_t result = SP + v;
+    if( high_pointer(result) > 0 ) F.C = true;
+
+    LD16_R(H, L, low_pointer(result) );
+}
 
 void CPU::ADD( Byte value )
 {
@@ -251,6 +265,32 @@ void CPU::DEC_P(Pointer p)
     p_mmu->write(p, r);
 }
 
+void CPU::ADD16(Byte& hi, Byte& lo, Pointer v){
+    F.N = false;
+
+    Pointer v1 = combine(hi, lo);
+    Pointer half_result = low_byte(v1) + low_byte(v);
+    if( high_byte(half_result) > 0 ) F.H = true;
+
+    uint32_t result = v1 + v;
+    if( high_pointer(result) > 0 ) F.C = true;
+
+    LD16_R(hi, lo, low_pointer(result) );
+}
+
+void CPU::ADD16(Pointer& r, Byte value){
+    F.Z = F.N = false;
+    int8_t v = (int8_t)value;
+
+    Pointer half_result = low_byte(r) + v;
+    if( high_byte( half_result ) > 0 ) F.H = true;
+
+    uint32_t result = r + v;
+    if( high_pointer(result) > 0 ) F.C = true;
+
+    LD16_R(r, low_pointer(result) );
+}
+
 void CPU::INC16(Register& hi, Register& lo)
 {
     Pointer result = combine(hi, lo) + 1;
@@ -323,7 +363,8 @@ void CPU::POP_AF(){
 
 void CPU::JR( Condition c, Byte offset )
 {
-    JP( c, PC + offset );
+    int8_t signed_offset = offset;
+    JP( c, PC + signed_offset );
 }
 
 void CPU::JP( Condition c, Pointer address )

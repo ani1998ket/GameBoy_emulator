@@ -157,13 +157,13 @@ void CPU::init()
     opcode_lookup[0xb8] = [this](){ CP (B); };
     opcode_lookup[0xc8] = [this](){ RET(Condition::Z); };
     opcode_lookup[0xd8] = [this](){ RET(Condition::C); };
-    opcode_lookup[0xe8] = [this](){};
-    opcode_lookup[0xf8] = [this](){ LD16_R(H, L, SP + arg1); };
+    opcode_lookup[0xe8] = [this](){ ADD16(SP, arg1); };
+    opcode_lookup[0xf8] = [this](){ LD_HL_SP_n(); };
 
-    opcode_lookup[0x09] = [this](){ }; 
-    opcode_lookup[0x19] = [this](){ };
-    opcode_lookup[0x29] = [this](){ };
-    opcode_lookup[0x39] = [this](){ };
+    opcode_lookup[0x09] = [this](){ ADD16(H, L, combine(B, C)); }; 
+    opcode_lookup[0x19] = [this](){ ADD16(H, L, combine(D, E)); };
+    opcode_lookup[0x29] = [this](){ ADD16(H, L, combine(H, L)); };
+    opcode_lookup[0x39] = [this](){ ADD16(H, L, SP ); };
     opcode_lookup[0x49] = [this](){ LD_R(C, C); };
     opcode_lookup[0x59] = [this](){ LD_R(E, C); };
     opcode_lookup[0x69] = [this](){ LD_R(L, C); };
@@ -175,7 +175,7 @@ void CPU::init()
     opcode_lookup[0xc9] = [this](){ RET(Condition::NONE); };
     opcode_lookup[0xd9] = [this](){ RET(Condition::NONE); EI(); };
     opcode_lookup[0xe9] = [this](){ JP(Condition::NONE, HL); };
-    opcode_lookup[0xf9] = [this](){};
+    opcode_lookup[0xf9] = [this](){ LD16_R(SP, combine(H, L)); };
 
     opcode_lookup[0x0a] = [this](){ LD_R_P(A, BC); }; 
     opcode_lookup[0x1a] = [this](){ LD_R_P(A, DE); };

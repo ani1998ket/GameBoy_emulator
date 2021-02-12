@@ -21,3 +21,11 @@ inline Byte low_byte( Pointer value ){
 inline Byte high_byte( Pointer value ){
     return (Byte)( value >> 8 );
 }
+
+inline Pointer low_pointer( uint32_t value ){
+    return (Pointer)( 0xffff & value ); 
+}
+
+inline Pointer high_pointer( uint32_t value ){
+    return (Pointer)( value >> 16 );
+}
