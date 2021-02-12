@@ -6,11 +6,21 @@
 #include "MMU.h"
 
 class Flag{
-    public:
+
+public:
+
     bool Z, N, H, C;
     Flag();
     void reset();
     Register get_register() const;
+    void set_register( Byte value );
+
+};
+
+enum class Condition{
+
+    NZ, Z, NC, C, NONE
+    
 };
 
 class CPU{
@@ -19,8 +29,8 @@ public:
 
     CPU();
     void connect(MMU* p_mmu);
+    
     void reset();
-
     void step();
 
 private:
@@ -35,7 +45,6 @@ private:
     std::function< void() > opcode_lookup[256];
 
 private:
-
     void fetch();
     void decode();
     void execute();
@@ -57,6 +66,9 @@ private:
     // 16 bit load commands
     void LD16_R(Register& hi, Register& lo, Pointer value );
     void LD16_R(Pointer& r, Pointer value);
+    void LD16_P(Pointer address, Pointer value);
+
+    void LD_HL_SP_n();
 
     // ALU
     void ADD( Byte value );
@@ -71,6 +83,13 @@ private:
     void DEC_R(Register& r);
     void INC_P(Pointer p);
     void DEC_P(Pointer p);
+    void DAA();
+    void SCF();
+    void CPL();
+    void CCF();
+
+    void ADD16(Byte& hi1, Byte& lo1, Pointer v );
+    void ADD16(Pointer& r, Byte value );
 
     void INC16(Register& hi, Register& lo);
     void INC16(Pointer& r);
@@ -81,5 +100,12 @@ private:
     void POP (Register& hi, Register& lo);
     void PUSH( Pointer value );
     void POP_AF();
+
+    // Jump operations
+    void JR( Condition c, Byte offset );
+    void JP( Condition c, Pointer address );
+    void RET( Condition c );
+    void RST( Pointer offset );
+    void CALL( Condition c, Pointer address );
 };
     

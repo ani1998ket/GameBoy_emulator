@@ -4,9 +4,14 @@
 #include "MMU.h"
 
 class Gameboy{
+
 public:
+
     Gameboy();
+
 private:
+
     MMU mmu;
     CPU cpu;
+    
 };
