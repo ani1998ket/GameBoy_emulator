@@ -53,7 +53,8 @@ void CPU::reset()
     PC = 0;
 }
 
-void CPU::step(){
+void CPU::step()
+{
     fetch();
     decode();
     execute();
@@ -146,10 +147,10 @@ void CPU::LD_HL_SP_n()
     int8_t v = (int8_t)arg1;
 
     Pointer half_result = low_byte(SP) + v;
-    if( high_byte( half_result ) > 0 ) F.H = true;
+    F.H = (high_byte( half_result ) > 0);
 
     uint32_t result = SP + v;
-    if( high_pointer(result) > 0 ) F.C = true;
+    F.C = ( high_pointer(result) > 0 );
 
     LD16_R(H, L, low_pointer(result) );
 }
@@ -157,12 +158,12 @@ void CPU::LD_HL_SP_n()
 void CPU::ADD( Byte value )
 {
     Byte nibble_result = low_nibble(A) + low_nibble(value);
-    if( high_nibble(nibble_result) > 0 ) F.H = true;
+    F.H = ( high_nibble(nibble_result) > 0 );
 
     Pointer result = A + value;
-    if( high_byte(result) > 0 ) F.C = true;
+    F.C = ( high_byte(result) > 0 );
 
-    if( result == 0 ) F.Z = true;
+    F.Z = ( result == 0 );
     F.N = false;
 
     A = (Byte)result;
@@ -170,11 +171,11 @@ void CPU::ADD( Byte value )
 
 void CPU::SUB( Byte value )
 {
-    if( low_nibble(A) < low_nibble(value) ) F.H = true;
-    if( A < value ) F.C = true;
+    F.H = ( low_nibble(A) < low_nibble(value) );
+    F.C = ( A < value );
 
     Pointer result = A - value;
-    if( result == 0 ) F.Z = true;
+    F.Z = ( result == 0 );
     F.N = true;
 
     A = (Byte)result;
@@ -183,7 +184,7 @@ void CPU::SUB( Byte value )
 void CPU::AND( Byte value )
 {
     A = A & value;
-    if(A == 0) F.Z = true;
+    F.Z = (A == 0);
     F.N = false;
     F.H = true;
     F.C = false;
@@ -192,7 +193,7 @@ void CPU::AND( Byte value )
 void CPU::OR ( Byte value )
 {
     A = A | value;
-    if(A == 0) F.Z = true;
+    F.Z = (A == 0);
     F.N = false;
     F.H = false;
     F.C = false;
@@ -208,37 +209,37 @@ void CPU::SBC( Byte value ){
 
 void CPU::XOR( Byte value ){
     A = A ^ value;
-    if( A == 0 ) F.Z = true;
+    F.Z = ( A == 0 );
     F.N = false;
     F.H = false;
     F.C = false;
 }
 
 void CPU::CP ( Byte value ){
-    if( low_nibble(A) < low_nibble(value) ) F.H = true;
-    if( A < value ) F.C = true;
+    F.H = ( low_nibble(A) < low_nibble(value) );
+    F.C = ( A < value );
 
     Pointer result = A - value;
-    if( result == 0 ) F.Z = true;
+    F.Z = ( result == 0 );
     F.N = true;
 }
 
 void CPU::INC_R(Register& r)
 {
     Byte nibble_result = low_nibble(r) + 1;
-    if( high_nibble(nibble_result) > 0 ) F.H = true;
+    F.H = ( high_nibble(nibble_result) > 0 );
 
     r = r + 1;
-    if( r == 0 ) F.Z = true;
+    F.Z = ( r == 0 );
     F.N = false;
 }
 
 void CPU::DEC_R(Register& r)
 {
-    if( low_nibble(r) == 0 ) F.H = true;
+    F.H = ( low_nibble(r) == 0 );
 
     r = r - 1;
-    if( r == 0 ) F.Z = true;
+    F.Z = ( r == 0 );
     F.N = true;
 }
 
@@ -246,10 +247,10 @@ void CPU::INC_P(Pointer p)
 {
     Byte r = p_mmu->read(p);
     Byte nibble_result = low_nibble(r) + 1;
-    if( high_nibble(nibble_result) > 0 ) F.H = true;
+    F.H = ( high_nibble(nibble_result) > 0 );
 
     r = r + 1;
-    if( r == 0 ) F.Z = true;
+    F.Z = ( r == 0 );
     F.N = false;
     p_mmu->write(p, r);
 }
@@ -257,10 +258,10 @@ void CPU::INC_P(Pointer p)
 void CPU::DEC_P(Pointer p)
 {
     Byte r = p_mmu->read(p);
-    if( low_nibble(r) == 0 ) F.H = true;
+    F.H = ( low_nibble(r) == 0 );
 
     r = r - 1;
-    if( r == 0 ) F.Z = true;
+    F.Z = ( r == 0 );
     F.N = true;
     p_mmu->write(p, r);
 }
@@ -270,10 +271,10 @@ void CPU::ADD16(Byte& hi, Byte& lo, Pointer v){
 
     Pointer v1 = combine(hi, lo);
     Pointer half_result = low_byte(v1) + low_byte(v);
-    if( high_byte(half_result) > 0 ) F.H = true;
+    F.H = ( high_byte(half_result) > 0 );
 
     uint32_t result = v1 + v;
-    if( high_pointer(result) > 0 ) F.C = true;
+    F.C = ( high_pointer(result) > 0 );
 
     LD16_R(hi, lo, low_pointer(result) );
 }
@@ -283,10 +284,10 @@ void CPU::ADD16(Pointer& r, Byte value){
     int8_t v = (int8_t)value;
 
     Pointer half_result = low_byte(r) + v;
-    if( high_byte( half_result ) > 0 ) F.H = true;
+    F.H = ( high_byte( half_result ) > 0 );
 
     uint32_t result = r + v;
-    if( high_pointer(result) > 0 ) F.C = true;
+    F.C = ( high_pointer(result) > 0 );
 
     LD16_R(r, low_pointer(result) );
 }
@@ -312,6 +313,7 @@ void CPU::DEC16(Pointer& r)
 {
     r--;
 }
+
 void CPU::DAA()
 {
     /* Find implementation */
