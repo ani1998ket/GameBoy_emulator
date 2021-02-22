@@ -39,7 +39,7 @@ void CPU::fetch()
     if (opcode == 0xcb)
     {
         opcode = p_mmu->read(PC++);
-        cb = 1;
+        prefix_cb_used = true;;
     }
 }
 
@@ -54,7 +54,7 @@ void CPU::decode()
 
 void CPU::execute()
 {
-    if (cb == 1)
+    if (prefix_cb_used == true)
     {
         cb_opcode_lookup[opcode]();
     }
