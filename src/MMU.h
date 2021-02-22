@@ -34,6 +34,7 @@ public:
 
 private:
 
+    std::array< Byte, SEGMENT_VIDEO_RAM.size() > video_ram = {0};
     std::array< Byte, SEGMENT_INTERNAL_RAM.size() > internal_ram = {0};
 
 };

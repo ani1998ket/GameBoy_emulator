@@ -4,6 +4,10 @@ MMU::MMU(){}
 
 Byte MMU::read( Pointer address )
 {
+    if( address >= SEGMENT_VIDEO_RAM.start && address <= SEGMENT_VIDEO_RAM.end){
+        return video_ram[ address - SEGMENT_VIDEO_RAM.start ];
+    }
+    else 
     if( address >= SEGMENT_INTERNAL_RAM.start && address <= SEGMENT_INTERNAL_RAM.end){
         return internal_ram[ address - SEGMENT_INTERNAL_RAM.start ];
     }
@@ -16,6 +20,10 @@ Byte MMU::read( Pointer address )
 
 void MMU::write( Pointer address, Byte value )
 {
+    if( address >= SEGMENT_VIDEO_RAM.start && address <= SEGMENT_VIDEO_RAM.end){
+        video_ram[ address - SEGMENT_VIDEO_RAM.start ] = value;
+    }
+    else 
     if( address >= SEGMENT_INTERNAL_RAM.start && address <= SEGMENT_INTERNAL_RAM.end){
         internal_ram[ address - SEGMENT_INTERNAL_RAM.start ] = value;
     }
