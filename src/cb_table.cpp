@@ -1,5 +1,6 @@
 #include "CPU.h"
 #include <cmath>
+#include <bitset>
 
 #define BC combine(B, C)
 #define DE combine(D, E)
@@ -10,10 +11,7 @@ void CPU::RLC(Register &r)
     F.C = r>>7;
     Byte temp = r<<1;
     r = temp + F.C;
-    if (r == 0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -23,10 +21,7 @@ void CPU::RLC_16(Pointer &r)
     F.C = r>>15;
     Pointer temp = r<<1;
     r = temp + F.C;
-    if (r == 0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -36,18 +31,8 @@ void CPU::RRC(Register &r)
     Byte temp1 = r<<7;
     Byte temp2 = r>>1;
     r = temp1 + temp2;
-    if (r == 0)
-    {
-        F.Z = 1;
-    }
-    if (temp1>0)
-    {
-        F.C = 1;
-    }
-    else
-    {
-        F.C = 0;
-    }
+    F.Z = (r==0);
+    F.C = (temp1>0);
     F.N = 0;
     F.H = 0;
 }
@@ -57,18 +42,8 @@ void CPU::RRC_16(Pointer &r)
     Pointer temp1 = r<<15;
     Pointer temp2 = r>>1;
     r = temp1 + temp2;
-    if (r == 0)
-    {
-        F.Z = 1;
-    }
-    if (temp1>0)
-    {
-        F.C = 1;
-    }
-    else
-    {
-        F.C = 0;
-    }
+    F.Z = (r==0);
+    F.C = (temp1>1);
     F.N = 0;
     F.H = 0;
 }
@@ -78,10 +53,7 @@ void CPU::RL(Register &r)
     Byte temp2 = r<<1;
     r = temp2 + F.C;
     F.C = temp1;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -92,10 +64,7 @@ void CPU::RL_16(Pointer &r)
     Pointer temp2 = r<<1;
     r = temp2 + F.C;
     F.C = temp1;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -106,10 +75,7 @@ void CPU::RR(Register &r)
     Byte temp2 = r>>1;
     r = temp2+(F.C<<7);
     F.C = temp1;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.Z = temp1;
     F.N = 0;
     F.H = 0;
 }
@@ -119,10 +85,7 @@ void CPU::RR_16(Pointer &r)
     Pointer temp2 = r>>1;
     r = temp2+(F.C<<15);
     F.C = temp1;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -132,10 +95,7 @@ void CPU::SLA(Register &r)
     F.C = r>>7;
     Byte temp = r<<1;
     r = temp;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -145,10 +105,7 @@ void CPU::SLA_16(Pointer &r)
     F.C = r>>15;
     Pointer temp = r<<1;
     r = temp;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -156,12 +113,9 @@ void CPU::SLA_16(Pointer &r)
 void CPU::SRA(Register &r)
 {
     F.C = r<<7;
-    Byte temp = (r>>1)+(r&(0b10000000));
+    Byte temp = (r>>1)+(r&(0x80));
     r = temp;
-    if (r==0)
-    {
-        F.Z = 1;
-    }
+    F.Z = (r==0);
     F.N = 0;
     F.H = 0;
 }
@@ -169,7 +123,7 @@ void CPU::SRA(Register &r)
 void CPU::SRA_16(Pointer &r)
 {
     F.C = r<<15;
-    Pointer temp = (r>>1)+(r&(0b1000000000000000));
+    Pointer temp = (r>>1)+(r&(0x8000));
     r = temp;
     if (r==0)
     {
@@ -195,21 +149,15 @@ void CPU::SRL_16(Pointer &r)
 
 void CPU::BIT(int bit_ind, Register &r)
 {
-    if (r&((Byte)(pow(2,bit_ind))) == 0)
-    {
-        F.Z = 0;
-    }
+    std::bitset<8> temp = r;
+    F.Z = (temp[bit_ind] == 0);
     F.N = 0;
     F.H = 1;
 }
 
 void CPU::RES(int bit_ind, Register &r)
 {
-    bool bit[8];
-    for (int i = 0; i < 8; i++)
-    {
-        bit[i] = r&((Byte)(pow(2,i)));
-    }
+    std::bitset<8> bit = r;
     bit[bit_ind] = 0;
     Byte temp = 0;
     for (int i = 0; i < 8; i++)
@@ -224,11 +172,7 @@ void CPU::RES(int bit_ind, Register &r)
 
 void CPU::RES_16(int bit_ind, Pointer &r)
 {
-    bool bit[16];
-    for (int i = 0; i < 16; i++)
-    {
-        bit[i] = r&((Pointer)(pow(2,i)));
-    }
+    std::bitset<16> bit = r;
     bit[bit_ind] = 0;
     Pointer temp = 0;
     for (int i = 0; i < 16; i++)
@@ -243,11 +187,7 @@ void CPU::RES_16(int bit_ind, Pointer &r)
 
 void CPU::SET(int bit_ind, Register &r)
 {
-    bool bit[8];
-    for (int i = 0; i < 8; i++)
-    {
-        bit[i] = r&((Byte)(pow(2,i)));
-    }
+    std::bitset<8> bit = r;
     bit[bit_ind] = 1;
     Byte temp = 0;
     for (int i = 0; i < 8; i++)
@@ -262,11 +202,7 @@ void CPU::SET(int bit_ind, Register &r)
 
 void CPU::SET_16(int bit_ind, Pointer &r)
 {
-    bool bit[16];
-    for (int i = 0; i < 16; i++)
-    {
-        bit[i] = r&((Pointer)(pow(2,i)));
-    }
+    std::bitset<16> bit = r;
     bit[bit_ind] = 1;
     Pointer temp = 0;
     for (int i = 0; i < 16; i++)
@@ -281,16 +217,12 @@ void CPU::SET_16(int bit_ind, Pointer &r)
 
 void CPU::SWAP(Register &r)
 {
-    Byte temp1 = (r&0b11110000)>>4;
-    Byte temp2 = (r&0b00001111)<<4;
-    r = temp1+temp2;
+    r = (low_nibble(r)<<4) + high_nibble(r);
 }
 
 void CPU::SWAP_16(Pointer &r)
 {
-    Pointer temp1 = (r&0b1111111100000000)>>8;
-    Pointer temp2 = (r&0b0000000011111111)<<8;
-    r = temp1+temp2;
+    r = (low_byte(r)<<8) + high_byte(r);
 }
 
 void CPU::init_cb(){
