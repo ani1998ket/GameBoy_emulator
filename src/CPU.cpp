@@ -1,9 +1,33 @@
 #include "CPU.h"
 #include "InstructionSet.h"
 
-#define BC combine(B, C)
-#define DE combine(D, E)
-#define HL combine(H, L)
+Flag::Flag()
+{
+    reset();
+}
+
+void Flag::reset()
+{
+    Z = 0;
+    N = 0;
+    H = 0;
+    C = 0;
+}
+
+Register Flag::get_register() const
+{
+   Register temp = 0;
+   temp = (Z << 7) + (N << 6) + (H << 5) + (C<<4);
+   return temp;
+}
+
+void Flag::set_register(Byte value)
+{
+    Z = (bool)( value & (1<<7) );
+    N = (bool)( value & (1<<6) );
+    H = (bool)( value & (1<<5) );
+    C = (bool)( value & (1<<4) );
+}
 
 CPU::CPU()
 {
@@ -22,12 +46,21 @@ void CPU::reset()
     C = 0;
     D = 0;
     E = 0;
-    F.Z = F.N = F.H = F.C = false;
+    F.reset();
+    H = 0;
+    L = 0;
     SP = 0;
     PC = 0;
 }
 
-Pointer combine(Register hi, Register lo)
+void CPU::step()
+{
+    fetch();
+    decode();
+    execute();
+}
+
+Pointer CPU::combine(Byte hi, Byte lo)
 {
     Pointer result = (hi<<8) + lo;
     return result;
@@ -64,10 +97,32 @@ void CPU::execute()
     }
 }
 
+void CPU::NOP(){}
+void CPU::STOP()
+{
+
+}
+
+void CPU::HALT()
+{
+
+}
+
+void CPU::DI()
+{
+    p_mmu->write(0xffff, 0);
+}
+
+void CPU::EI()
+{
+    p_mmu->write(0xffff, 1);
+}
+
 void CPU::LD_R(Register& r, Byte value)
 {
     r = value;
 }
+
 void CPU::LD_R_P(Register& r, Pointer address)
 {
     r = p_mmu->read( address );
@@ -83,62 +138,306 @@ void CPU::LD16_R(Register& hi, Register& lo, Pointer value )
     lo = (Byte)(0x00ff & value);
     hi = (Byte)(value >> 8);
 }
-void CPU::LD16_R(Pointer r, Pointer value)
+
+void CPU::LD16_R(Pointer& r, Pointer value)
 {
     r = value;
 }
 
-
-void CPU::init(){
-    opcode_lookup[0x00] = [this](){};
-    opcode_lookup[0x10] = [this](){};
-    opcode_lookup[0x20] = [this](){};
-    opcode_lookup[0x30] = [this](){};
-    opcode_lookup[0x40] = [this](){ LD_R(B, B); };
-    opcode_lookup[0x50] = [this](){ LD_R(D, B); };
-    opcode_lookup[0x60] = [this](){ LD_R(H, B); };
-    opcode_lookup[0x70] = [this](){ LD_P(HL,B); };
-    opcode_lookup[0x80] = [this](){ ADD(B); };
-    opcode_lookup[0x90] = [this](){ SUB(B); };
-    opcode_lookup[0xa0] = [this](){ AND(B); };
-    opcode_lookup[0xb0] = [this](){ OR (B);};
-    opcode_lookup[0xc0] = [this](){};
-    opcode_lookup[0xd0] = [this](){};
-    opcode_lookup[0xe0] = [this](){ LD_P(0xff00 + arg1, A); };
-    opcode_lookup[0xf0] = [this](){ LD_R(A, 0xff00 + arg1); };
-
-    opcode_lookup[0x01] = [this](){ LD_R(B, arg2); LD_R(C, arg1); };
-    opcode_lookup[0x11] = [this](){ LD_R(D, arg2); LD_R(E, arg1); };
-    opcode_lookup[0x21] = [this](){ LD_R(H, arg2); LD_R(L, arg1); };
-    opcode_lookup[0x31] = [this](){ LD16_R(SP, combine(arg2,arg1)); };
-    opcode_lookup[0x41] = [this](){ LD_R(B, C); };
-    opcode_lookup[0x51] = [this](){ LD_R(D, C); };
-    opcode_lookup[0x61] = [this](){ LD_R(H, C); };
-    opcode_lookup[0x71] = [this](){ LD_P(HL,C); };
-    opcode_lookup[0x81] = [this](){ ADD(C); };
-    opcode_lookup[0x91] = [this](){ SUB(C); };
-    opcode_lookup[0xa1] = [this](){ AND(C); };
-    opcode_lookup[0xb1] = [this](){ OR (C);};
-    opcode_lookup[0xc1] = [this](){ POP(B, C); };
-    opcode_lookup[0xd1] = [this](){ POP(D, E); };
-    opcode_lookup[0xe1] = [this](){ POP(H, L); };
-    opcode_lookup[0xf1] = [this](){ /* Change flag */ };
-
-    opcode_lookup[0x02] = [this](){ LD_P(BC, A); };
-    opcode_lookup[0x12] = [this](){ LD_P(DE, A); };
-    opcode_lookup[0x22] = [this](){ LD_P(HL, A); LD16_R(H, L, HL + 1); };
-    opcode_lookup[0x32] = [this](){ LD_P(HL, A); LD16_R(H, L, HL - 1); };
-    opcode_lookup[0x42] = [this](){ LD_R(B, D); };
-    opcode_lookup[0x52] = [this](){ LD_R(D, D); };
-    opcode_lookup[0x62] = [this](){ LD_R(H, D); };
-    opcode_lookup[0x72] = [this](){ LD_P(HL,D); };
-    opcode_lookup[0x82] = [this](){ ADD(D); };
-    opcode_lookup[0x92] = [this](){ SUB(D); };
-    opcode_lookup[0xa2] = [this](){ AND(D); };
-    opcode_lookup[0xb2] = [this](){ OR (D);};
-    opcode_lookup[0xc2] = [this](){};
-    opcode_lookup[0xd2] = [this](){};
-    opcode_lookup[0xe2] = [this](){ LD_P(0xff00 + C, A); };
-    opcode_lookup[0xf2] = [this](){ LD_R(A, 0xff00 + C); };
-
+void CPU::LD16_P(Pointer address, Pointer value)
+{
+    Byte low = static_cast<Byte>(0xff & value);
+    Byte high = static_cast<Byte>(value >> 8);
+    p_mmu->write(address, low);
+    p_mmu->write(address + 1, high);
 }
+
+void CPU::LD_HL_SP_n()
+{
+    F.Z = F.N = false;
+
+    int8_t v = (int8_t)arg1;
+
+    Pointer half_result = low_byte(SP) + v;
+    F.H = (high_byte( half_result ) > 0);
+
+    uint32_t result = SP + v;
+    F.C = ( high_pointer(result) > 0 );
+
+    LD16_R(H, L, low_pointer(result) );
+}
+
+void CPU::ADD( Byte value )
+{
+    Byte nibble_result = low_nibble(A) + low_nibble(value);
+    F.H = ( high_nibble(nibble_result) > 0 );
+
+    Pointer result = A + value;
+    F.C = ( high_byte(result) > 0 );
+
+    F.Z = ( result == 0 );
+    F.N = false;
+
+    A = (Byte)result;
+}
+
+void CPU::SUB( Byte value )
+{
+    F.H = ( low_nibble(A) < low_nibble(value) );
+    F.C = ( A < value );
+
+    Pointer result = A - value;
+    F.Z = ( result == 0 );
+    F.N = true;
+
+    A = (Byte)result;
+}
+
+void CPU::AND( Byte value )
+{
+    A = A & value;
+    F.Z = (A == 0);
+    F.N = false;
+    F.H = true;
+    F.C = false;
+}
+
+void CPU::OR ( Byte value )
+{
+    A = A | value;
+    F.Z = (A == 0);
+    F.N = false;
+    F.H = false;
+    F.C = false;
+}
+
+void CPU::ADC( Byte value ){
+    ADD( value + (Byte)(F.C) );
+}
+
+void CPU::SBC( Byte value ){
+    SUB( value + (Byte)(F.C) );
+}
+
+void CPU::XOR( Byte value ){
+    A = A ^ value;
+    F.Z = ( A == 0 );
+    F.N = false;
+    F.H = false;
+    F.C = false;
+}
+
+void CPU::CP ( Byte value ){
+    F.H = ( low_nibble(A) < low_nibble(value) );
+    F.C = ( A < value );
+
+    Pointer result = A - value;
+    F.Z = ( result == 0 );
+    F.N = true;
+}
+
+void CPU::INC_R(Register& r)
+{
+    Byte nibble_result = low_nibble(r) + 1;
+    F.H = ( high_nibble(nibble_result) > 0 );
+
+    r = r + 1;
+    F.Z = ( r == 0 );
+    F.N = false;
+}
+
+void CPU::DEC_R(Register& r)
+{
+    F.H = ( low_nibble(r) == 0 );
+
+    r = r - 1;
+    F.Z = ( r == 0 );
+    F.N = true;
+}
+
+void CPU::INC_P(Pointer p)
+{
+    Byte r = p_mmu->read(p);
+    Byte nibble_result = low_nibble(r) + 1;
+    F.H = ( high_nibble(nibble_result) > 0 );
+
+    r = r + 1;
+    F.Z = ( r == 0 );
+    F.N = false;
+    p_mmu->write(p, r);
+}
+
+void CPU::DEC_P(Pointer p)
+{
+    Byte r = p_mmu->read(p);
+    F.H = ( low_nibble(r) == 0 );
+
+    r = r - 1;
+    F.Z = ( r == 0 );
+    F.N = true;
+    p_mmu->write(p, r);
+}
+
+void CPU::ADD16(Byte& hi, Byte& lo, Pointer v){
+    F.N = false;
+
+    Pointer v1 = combine(hi, lo);
+    Pointer half_result = low_byte(v1) + low_byte(v);
+    F.H = ( high_byte(half_result) > 0 );
+
+    uint32_t result = v1 + v;
+    F.C = ( high_pointer(result) > 0 );
+
+    LD16_R(hi, lo, low_pointer(result) );
+}
+
+void CPU::ADD16(Pointer& r, Byte value){
+    F.Z = F.N = false;
+    int8_t v = (int8_t)value;
+
+    Pointer half_result = low_byte(r) + v;
+    F.H = ( high_byte( half_result ) > 0 );
+
+    uint32_t result = r + v;
+    F.C = ( high_pointer(result) > 0 );
+
+    LD16_R(r, low_pointer(result) );
+}
+
+void CPU::INC16(Register& hi, Register& lo)
+{
+    Pointer result = combine(hi, lo) + 1;
+    LD16_R(hi, lo, result);
+}
+
+void CPU::INC16(Pointer& r)
+{
+    r++;
+}
+
+void CPU::DEC16(Register& hi, Register& lo)
+{
+    Pointer result = combine(hi, lo) - 1;
+    LD16_R(hi, lo, result);
+}
+
+void CPU::DEC16(Pointer& r)
+{
+    r--;
+}
+
+void CPU::DAA()
+{
+    /* Find implementation */
+}
+
+void CPU::SCF()
+{
+    F.N = false;
+    F.H = false;
+    F.C = true;
+}
+
+void CPU::CPL()
+{
+    A = A ^ 0xff; // Flip bits
+    F.N = true;
+    F.H = true;
+}
+
+void CPU::CCF()
+{
+    F.N = false;
+    F.H = false;
+    F.C = !F.C;
+}
+
+void CPU::POP (Register& hi, Register& lo)
+{
+    Byte low = p_mmu->read(SP);
+    Byte high = p_mmu->read(SP+1);
+    SP += 2;
+    LD16_R(hi, lo, combine(high,low) );
+}
+
+void CPU::PUSH( Pointer value )
+{
+    SP -= 2;
+    LD16_P(SP, value);
+}
+
+// temporary fix
+void CPU::POP_AF(){
+    Byte low = p_mmu->read(SP);
+    Byte high = p_mmu->read(SP+1);
+    SP += 2;
+    F.set_register(low);
+    LD_R(A, high);
+}
+
+void CPU::JR( Condition c, Byte offset )
+{
+    int8_t signed_offset = offset;
+    JP( c, PC + signed_offset );
+}
+
+void CPU::JP( Condition c, Pointer address )
+{
+    switch(c){
+        case Condition::NZ:
+            if( F.Z == false ) PC = address;
+        break;
+        case Condition::Z:
+            if( F.Z == true ) PC = address;
+        break;
+        case Condition::NC:
+            if( F.C == false ) PC = address;
+        break;
+        case Condition::C:
+            if( F.C == true ) PC = address;
+        break;
+        case Condition::NONE:
+            PC = address;
+        break;
+        default:
+        break;
+    }
+}
+
+void CPU::RET( Condition c )
+{
+    Byte hi, lo;
+    POP(hi, lo);
+    Pointer address = combine(hi, lo);
+    switch(c){
+        case Condition::NZ:
+            if( F.Z == false ) PC = address;
+        break;
+        case Condition::Z:
+            if( F.Z == true ) PC = address;
+        break;
+        case Condition::NC:
+            if( F.C == false ) PC = address;
+        break;
+        case Condition::C:
+            if( F.C == true ) PC = address;
+        break;
+        case Condition::NONE:
+        break;
+        default:
+        break;
+    }
+}
+
+void CPU::RST( Pointer offset )
+{
+    PUSH( PC - 1 ); // Current address
+    JP( Condition::NONE, offset );
+}
+
+void CPU::CALL( Condition c, Pointer address )
+{
+    PUSH( PC ); // Next address
+    JP( c, address );
+}
+
