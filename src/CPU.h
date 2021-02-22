@@ -1,21 +1,12 @@
 #pragma once
 
 #include <functional>
+#include <iostream>
+using std::cout;
 
 #include "utils.h"
 #include "MMU.h"
-
-class Flag{
-
-public:
-
-    bool Z, N, H, C;
-    Flag();
-    void reset();
-    Register get_register() const;
-    void set_register( Byte value );
-
-};
+#include "Flag.h"
 
 enum class Condition{
 
@@ -32,6 +23,7 @@ public:
     
     void reset();
     void step();
+    void print_state();
 
 private:
 
