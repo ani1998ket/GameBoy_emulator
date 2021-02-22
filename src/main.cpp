@@ -3,4 +3,5 @@
 int main()
 {
     Gameboy gameboy;
+    gameboy.start();
 }

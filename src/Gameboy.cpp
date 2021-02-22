@@ -3,5 +3,11 @@
 Gameboy::Gameboy()
 {
     cpu.connect(&mmu);
-    cpu.print_state();
+    screen.connect(&mmu);
+}
+
+void Gameboy::start(){
+    while( screen.is_open() ){
+        screen.render();
+    }
 }
