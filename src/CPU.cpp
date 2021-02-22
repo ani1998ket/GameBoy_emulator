@@ -1,34 +1,6 @@
 #include "CPU.h"
 #include "InstructionSet.h"
 
-Flag::Flag()
-{
-    reset();
-}
-
-void Flag::reset()
-{
-    Z = 0;
-    N = 0;
-    H = 0;
-    C = 0;
-}
-
-Register Flag::get_register() const
-{
-   Register temp = 0;
-   temp = (Z << 7) + (N << 6) + (H << 5) + (C<<4);
-   return temp;
-}
-
-void Flag::set_register(Byte value)
-{
-    Z = (bool)( value & (1<<7) );
-    N = (bool)( value & (1<<6) );
-    H = (bool)( value & (1<<5) );
-    C = (bool)( value & (1<<4) );
-}
-
 CPU::CPU()
 {
 
@@ -37,6 +9,11 @@ CPU::CPU()
 void CPU::connect(MMU* p_mmu)
 {
     this->p_mmu = p_mmu;
+}
+
+void CPU::print_state(){
+    cout << std::hex <<  "A : " << (int)A << "\t F : " << (int)F.get_register() << "\t B : " << (int)B << "\t C : " << (int)C << std::endl;
+    cout << std::hex <<  "D : " << (int)D << "\t E : " << (int)E  << "\t H : " << (int)H << "\t L : " << (int)L << std::endl;
 }
 
 void CPU::reset()
@@ -98,6 +75,7 @@ void CPU::execute()
 }
 
 void CPU::NOP(){}
+
 void CPU::STOP()
 {
 
