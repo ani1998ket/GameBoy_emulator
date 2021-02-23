@@ -20,8 +20,8 @@ void CPU::reset()
 {
     A = 0;
     B = 0;
-    C = 0; 
-    D = 0; 
+    C = 0;
+    D = 0;
     E = 0;
     F.reset();
     H = 0;
@@ -46,6 +46,11 @@ Pointer CPU::combine(Byte hi, Byte lo)
 void CPU::fetch()
 {
     opcode = p_mmu->read(PC++);
+    if (opcode == 0xcb)
+    {
+        opcode = p_mmu->read(PC++);
+        prefix_cb_used = true;;
+    }
 }
 
 void CPU::decode()
@@ -59,7 +64,14 @@ void CPU::decode()
 
 void CPU::execute()
 {
-    opcode_lookup[opcode]();
+    if (prefix_cb_used == true)
+    {
+        cb_opcode_lookup[opcode]();
+    }
+    else
+    {
+        opcode_lookup[opcode]();
+    }
 }
 
 void CPU::NOP(){}
@@ -397,12 +409,13 @@ void CPU::RET( Condition c )
 
 void CPU::RST( Pointer offset )
 {
-    PUSH( PC - 1 ); // Current address 
+    PUSH( PC - 1 ); // Current address
     JP( Condition::NONE, offset );
 }
 
 void CPU::CALL( Condition c, Pointer address )
 {
-    PUSH( PC ); // Next address 
+    PUSH( PC ); // Next address
     JP( c, address );
 }
+
